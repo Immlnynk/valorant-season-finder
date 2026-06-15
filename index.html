@@ -59,6 +59,7 @@
   /* ===== 言語切り替え ===== */
   .lang-switch {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     justify-content: flex-end;
     margin-bottom: 16px;
@@ -229,6 +230,10 @@
     <div class="lang-switch">
       <button type="button" data-lang="ja">日本語</button>
       <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="ko">한국어</button>
+      <button type="button" data-lang="zh">中文</button>
+      <button type="button" data-lang="pt">Português</button>
+      <button type="button" data-lang="es">Español</button>
     </div>
 
     <!-- 現在のシーズン（ページを開くと自動表示） -->
@@ -328,7 +333,12 @@ const PERIODS = [
 ];
 
 const FIRST = PERIODS[0].start;
-const MONTHS_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTHS = {
+  en: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+  pt: ["jan.","fev.","mar.","abr.","mai.","jun.","jul.","ago.","set.","out.","nov.","dez."],
+  es: ["ene.","feb.","mar.","abr.","may.","jun.","jul.","ago.","sep.","oct.","nov.","dic."],
+};
+function monthName(m) { return (MONTHS[lang] || MONTHS.en)[m - 1]; }
 
 // ===== 多言語辞書 =====
 const I18N = {
@@ -402,20 +412,172 @@ const I18N = {
           "It is not affiliated with, endorsed, or sponsored by Riot Games, Inc. or VALORANT. " +
           "VALORANT and all related trademarks belong to Riot Games, Inc.",
   },
+  ko: {
+    htmlLang: "ko",
+    title: "VALORANT 현재 시즌·Act 확인 도구 | 현재 Act 남은 일수 표시",
+    nowLabel: "현재 시즌",
+    heroH1: "VALORANT는 지금 어느 시즌 / Act?",
+    card1H2: "날짜로 시즌 확인하기",
+    card1P: "날짜를 선택하면 그 시점의 시즌 / Act를 표시합니다",
+    dateLabel: "날짜 선택",
+    card2H2: "시즌 / Act 목록",
+    card2P: "VALORANT 정식 출시 이후의 모든 Episode / Season·Act 기간 목록",
+    thEra: "시즌 / Episode",
+    thAct: "Act",
+    thStart: "시작일",
+    thEnd: "종료일",
+    tba: "미정",
+    emptyDefault: "위 달력에서 날짜를 선택하세요.",
+    beforeRelease: d => `${d}은(는) VALORANT 정식 출시(2020년 6월 2일) 이전입니다.`,
+    afterRange: d => `${d}은(는) 데이터 수록 범위를 벗어났습니다.<br>새로운 Act가 발표되면 추가해 주세요.`,
+    periodLabel: "기간",
+    elapsedLabel: "진행",
+    progressLabel: pct => `Act 진행도 ${pct}%`,
+    elapsedDays: (total, elapsed, remaining) => `${total}일 중 ${elapsed}일째 (남은 ${remaining}일)`,
+    elapsedDaysOpen: elapsed => `시작 후 ${elapsed}일째`,
+    openNote: "※ 종료일이 미정이므로 남은 일수와 진행도를 표시할 수 없습니다.",
+    heroPeriod: (s, e) => `기간: ${s} ~ ${e}`,
+    heroRemaining: (remaining, pct) => `이 Act는 <b>${remaining}일</b> 남음 (진행도 ${pct}%)`,
+    heroOpen: elapsed => `진행 중 (시작 후 <b>${elapsed}일째</b>). 종료일이 미정이라 남은 일수를 계산할 수 없습니다.`,
+    heroOut: "현재 데이터 수록 범위를 벗어났습니다. 새로운 Act가 발표되면 추가해 주세요.",
+    foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
+          'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
+          'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
+          '본 사이트는 VALORANT 플레이어들이 자발적으로 만든 <b>비공식 팬메이드 도구</b>입니다. ' +
+          'Riot Games, Inc. 및 VALORANT와 일절 관계가 없으며 공식 승인·제휴된 것이 아닙니다. ' +
+          'VALORANT 및 관련된 모든 상표는 Riot Games, Inc.에 귀속됩니다.',
+  },
+  zh: {
+    htmlLang: "zh",
+    title: "VALORANT 当前赛季·Act 查询工具 | 显示当前 Act 剩余天数",
+    nowLabel: "当前赛季",
+    heroH1: "VALORANT 现在是哪个赛季 / Act？",
+    card1H2: "按日期查询赛季",
+    card1P: "选择日期即可显示当时的赛季 / Act",
+    dateLabel: "选择日期",
+    card2H2: "赛季 / Act 列表",
+    card2P: "VALORANT 正式发布以来的全部 Episode / Season·Act 时间列表",
+    thEra: "赛季 / Episode",
+    thAct: "Act",
+    thStart: "开始日期",
+    thEnd: "结束日期",
+    tba: "待定",
+    emptyDefault: "请从上方日历选择日期。",
+    beforeRelease: d => `${d} 早于 VALORANT 正式发布（2020年6月2日）。`,
+    afterRange: d => `${d} 超出了数据收录范围。<br>有新的 Act 公布后请补充。`,
+    periodLabel: "期间",
+    elapsedLabel: "进度",
+    progressLabel: pct => `Act 进度 ${pct}%`,
+    elapsedDays: (total, elapsed, remaining) => `共 ${total} 天，第 ${elapsed} 天（剩余 ${remaining} 天）`,
+    elapsedDaysOpen: elapsed => `开始后第 ${elapsed} 天`,
+    openNote: "※ 结束日期待定，无法显示剩余天数和进度。",
+    heroPeriod: (s, e) => `期间：${s} ~ ${e}`,
+    heroRemaining: (remaining, pct) => `本 Act 还剩 <b>${remaining} 天</b>（进度 ${pct}%）`,
+    heroOpen: elapsed => `进行中（开始后第 <b>${elapsed} 天</b>）。结束日期待定，无法计算剩余天数。`,
+    heroOut: "当前超出数据收录范围。有新的 Act 公布后请补充数据。",
+    foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
+          'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
+          'Act 4 的结束日期尚未官方公布。<br><br>' +
+          '本网站是由 VALORANT 玩家自发制作的<b>非官方粉丝工具</b>，' +
+          '与 Riot Games, Inc. 及 VALORANT 没有任何关联，未经官方认可或合作。' +
+          'VALORANT 及相关所有商标归 Riot Games, Inc. 所有。',
+  },
+  pt: {
+    htmlLang: "pt",
+    title: "VALORANT Temporada e Act Atual | Dias Restantes do Act Atual",
+    nowLabel: "Temporada Atual",
+    heroH1: "Em qual Temporada / Act o VALORANT está agora?",
+    card1H2: "Descubra a Temporada pela Data",
+    card1P: "Escolha uma data para ver a Temporada / Act daquele momento",
+    dateLabel: "Selecione uma data",
+    card2H2: "Lista de Temporadas / Acts",
+    card2P: "Todos os períodos de Episode / Season e Act desde o lançamento oficial do VALORANT",
+    thEra: "Temporada / Episode",
+    thAct: "Act",
+    thStart: "Início",
+    thEnd: "Fim",
+    tba: "A definir",
+    emptyDefault: "Escolha uma data no calendário acima.",
+    beforeRelease: d => `${d} é anterior ao lançamento oficial do VALORANT (2 de junho de 2020).`,
+    afterRange: d => `${d} está além do intervalo de dados.<br>Adicione novos Acts quando forem anunciados.`,
+    periodLabel: "Período",
+    elapsedLabel: "Progresso",
+    progressLabel: pct => `Progresso do Act ${pct}%`,
+    elapsedDays: (total, elapsed, remaining) => `Dia ${elapsed} de ${total} (${remaining} dias restantes)`,
+    elapsedDaysOpen: elapsed => `Dia ${elapsed} desde o início`,
+    openNote: "* Dias restantes e progresso indisponíveis até a data de término ser anunciada.",
+    heroPeriod: (s, e) => `Período: ${s} – ${e}`,
+    heroRemaining: (remaining, pct) => `<b>${remaining} dias</b> restantes neste Act (progresso ${pct}%)`,
+    heroOpen: elapsed => `Em andamento (<b>dia ${elapsed}</b>). Os dias restantes não podem ser calculados até a data de término ser anunciada.`,
+    heroOut: "Hoje está fora do intervalo de dados registrado. Adicione novos Acts quando forem anunciados.",
+    foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
+          'Os limites dos Acts são baseados na data de início de cada Act. ' +
+          'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
+          'A data de término do Act 4 ainda não foi anunciada oficialmente.<br><br>' +
+          'Este é um <b>site não oficial feito por fãs</b> jogadores de VALORANT. ' +
+          'Não é afiliado, endossado ou patrocinado pela Riot Games, Inc. ou pelo VALORANT. ' +
+          'VALORANT e todas as marcas relacionadas pertencem à Riot Games, Inc.',
+  },
+  es: {
+    htmlLang: "es",
+    title: "VALORANT Temporada y Act Actual | Días Restantes del Act Actual",
+    nowLabel: "Temporada Actual",
+    heroH1: "¿En qué Temporada / Act está VALORANT ahora?",
+    card1H2: "Encuentra la Temporada por Fecha",
+    card1P: "Elige una fecha para ver la Temporada / Act de ese momento",
+    dateLabel: "Selecciona una fecha",
+    card2H2: "Lista de Temporadas / Acts",
+    card2P: "Todos los períodos de Episode / Season y Act desde el lanzamiento oficial de VALORANT",
+    thEra: "Temporada / Episode",
+    thAct: "Act",
+    thStart: "Inicio",
+    thEnd: "Fin",
+    tba: "Por definir",
+    emptyDefault: "Elige una fecha en el calendario de arriba.",
+    beforeRelease: d => `${d} es anterior al lanzamiento oficial de VALORANT (2 de junio de 2020).`,
+    afterRange: d => `${d} está fuera del rango de datos.<br>Agrega nuevos Acts cuando se anuncien.`,
+    periodLabel: "Período",
+    elapsedLabel: "Progreso",
+    progressLabel: pct => `Progreso del Act ${pct}%`,
+    elapsedDays: (total, elapsed, remaining) => `Día ${elapsed} de ${total} (${remaining} días restantes)`,
+    elapsedDaysOpen: elapsed => `Día ${elapsed} desde el inicio`,
+    openNote: "* Los días restantes y el progreso no están disponibles hasta que se anuncie la fecha de finalización.",
+    heroPeriod: (s, e) => `Período: ${s} – ${e}`,
+    heroRemaining: (remaining, pct) => `<b>${remaining} días</b> restantes en este Act (progreso ${pct}%)`,
+    heroOpen: elapsed => `En curso (<b>día ${elapsed}</b>). Los días restantes no se pueden calcular hasta que se anuncie la fecha de finalización.`,
+    heroOut: "Hoy está fuera del rango de datos registrado. Agrega nuevos Acts cuando se anuncien.",
+    foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
+          'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
+          'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
+          'La fecha de finalización del Act 4 aún no se ha anunciado oficialmente.<br><br>' +
+          'Este es un <b>sitio no oficial hecho por fans</b> jugadores de VALORANT. ' +
+          'No está afiliado, respaldado ni patrocinado por Riot Games, Inc. ni por VALORANT. ' +
+          'VALORANT y todas las marcas relacionadas pertenecen a Riot Games, Inc.',
+  },
 };
 
-let lang = localStorage.getItem("vsf-lang") || (navigator.language && navigator.language.startsWith("ja") ? "ja" : "en");
+const SUPPORTED = ["ja", "en", "ko", "zh", "pt", "es"];
+const navLang = (navigator.language || "en").slice(0, 2).toLowerCase();
+let lang = localStorage.getItem("vsf-lang") || (SUPPORTED.includes(navLang) ? navLang : "en");
 
 const resultEl = document.getElementById("result");
 const dateEl = document.getElementById("date");
 
 function fmt(d) {
   const [y, m, day] = d.split("-").map(Number);
-  return lang === "ja" ? `${y}年${m}月${day}日` : `${MONTHS_EN[m - 1]} ${day}, ${y}`;
+  if (lang === "ja") return `${y}年${m}月${day}日`;
+  if (lang === "ko") return `${y}년 ${m}월 ${day}일`;
+  if (lang === "zh") return `${y}年${m}月${day}日`;
+  if (lang === "pt" || lang === "es") return `${day} de ${monthName(m)} de ${y}`;
+  return `${monthName(m)} ${day}, ${y}`;
 }
 function fmtShort(d) {
   const [y, m, day] = d.split("-").map(Number);
-  return lang === "ja" ? `${y}/${m}/${day}` : `${MONTHS_EN[m - 1]} ${day}, ${y}`;
+  if (lang === "ja") return `${y}/${m}/${day}`;
+  if (lang === "ko") return `${y}.${m}.${day}`;
+  if (lang === "zh") return `${y}/${m}/${day}`;
+  if (lang === "pt" || lang === "es") return `${day} ${monthName(m)} ${y}`;
+  return `${monthName(m)} ${day}, ${y}`;
 }
 function daysBetween(a, b) {
   return Math.round((new Date(b) - new Date(a)) / 86400000);
