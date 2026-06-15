@@ -227,6 +227,19 @@
   }
   .foot-nav a { color: var(--muted); margin: 0 10px; text-decoration: none; }
   .foot-nav a:hover { color: var(--text); }
+
+  /* ===== ガイド（解説コンテンツ） ===== */
+  .guide h2 {
+    font-size: 14px; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text); margin: 24px 0 10px;
+  }
+  .guide > div > h2:first-child { margin-top: 0; }
+  .guide p { font-size: 13px; color: var(--muted); line-height: 1.85; margin-bottom: 10px; }
+  .guide ul { margin: 0 0 10px 1.2em; }
+  .guide li { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 5px; }
+  .guide b { color: var(--text); }
+  .guide .faq-q { font-size: 13px; font-weight: 700; color: var(--text); margin: 14px 0 4px; }
+  .guide .faq-a { font-size: 13px; color: var(--muted); line-height: 1.8; }
 </style>
 </head>
 <body>
@@ -285,6 +298,69 @@
           </thead>
           <tbody id="period-table"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- 解説コンテンツ（ガイド） -->
+    <div class="card">
+      <div class="body guide">
+        <!-- 日本語 -->
+        <div data-guide-lang="ja">
+          <h2>シーズン・Act・Episode の仕組み</h2>
+          <p>VALORANT の競技（ランク）は「<b>Act</b>」という区切りで進みます。1つの Act は約2か月です。</p>
+          <ul>
+            <li><b>2020〜2024年</b>：「Episode（大きな区切り）＋その中の複数 Act」という構成でした。</li>
+            <li><b>2025年以降</b>：Riot が体系を変更し、「1年＝1つの Season、その中に6つの Act」という年単位の形になりました。当サイトは新旧どちらの区切りにも対応しています。</li>
+          </ul>
+          <p>Act が切り替わるたびにランクがリセットされ、新しい報酬や「Act Rank（その Act の戦績バッジ）」が始まります。だから「今が何 Act の何日目か」を知ることが、ランク計画の出発点になります。</p>
+
+          <h2>ランクリセットの仕組み</h2>
+          <p>Act の切り替わりには2種類あります。</p>
+          <ul>
+            <li><b>ハードリセット（年2回）</b>：シーズン開始時（毎年1月ごろ）とミッドシーズン（7月ごろ）。ランクが大きく下がります。</li>
+            <li><b>ソフトリセット（その他の Act 切替）</b>：下げ幅は小さめ。Patch 12.00 以降、急激な降格は緩和されました。</li>
+          </ul>
+          <p>リセット後は<b>プレイスメント（配置）マッチ</b>が必要です。シーズン開始時は<b>5戦</b>、通常の Act 切替は<b>1戦</b>で新しいランクが表示されます。なお、イモータル / レディアント帯はリーダーボード順位こそ保持されますが、RR（ランクレーティング）が約90%減少します。</p>
+
+          <h2>よくある質問（FAQ）</h2>
+          <div class="faq-q">Q. 今は何シーズン・何 Act ですか？</div>
+          <div class="faq-a">A. ページ上部に現在の Season / Act と残り日数を自動表示しています。</div>
+          <div class="faq-q">Q. ランクはいつリセットされますか？</div>
+          <div class="faq-a">A. 各 Act の開始時です。特に年2回のハードリセット（1月・7月ごろ）は下げ幅が大きくなります。</div>
+          <div class="faq-q">Q. 過去の Act や開始日を調べられますか？</div>
+          <div class="faq-a">A. 日付を選べばその時の Season / Act を判定でき、正式リリース以降の全 Act 一覧も確認できます。</div>
+          <div class="faq-q">Q. このサイトは公式ですか？</div>
+          <div class="faq-a">A. いいえ。プレイヤー有志による非公式のファンメイドツールです。</div>
+        </div>
+
+        <!-- English -->
+        <div data-guide-lang="en" hidden>
+          <h2>How Seasons, Acts &amp; Episodes Work</h2>
+          <p>VALORANT's competitive (ranked) play is divided into segments called <b>Acts</b>. Each Act lasts about two months.</p>
+          <ul>
+            <li><b>2020–2024</b>: The structure was "Episodes (large segments) containing several Acts each."</li>
+            <li><b>2025 onward</b>: Riot changed the system to an annual format — "one Season per year, divided into six Acts." This site supports both the old and new structures.</li>
+          </ul>
+          <p>Every time an Act changes, your rank is reset and new rewards and an "Act Rank" (a badge tracking your record that Act) begin. That's why knowing which Act you're in — and how far along it is — is the starting point for planning your rank.</p>
+
+          <h2>How Rank Resets Work</h2>
+          <p>There are two kinds of Act transitions:</p>
+          <ul>
+            <li><b>Hard reset (twice a year)</b>: At the season start (around January) and midseason (around July). Your rank drops significantly.</li>
+            <li><b>Soft reset (all other Act transitions)</b>: A smaller drop. Since Patch 12.00, sharp demotions have been softened.</li>
+          </ul>
+          <p>After a reset you must play <b>placement matches</b>: <b>5 games</b> at the start of a season, and <b>1 game</b> for a normal Act transition, before your new rank appears. Note that Immortal / Radiant players keep their leaderboard spot, but their RR (Rank Rating) drops by about 90%.</p>
+
+          <h2>FAQ</h2>
+          <div class="faq-q">Q. What Season / Act is it right now?</div>
+          <div class="faq-a">A. The current Season / Act and days remaining are shown automatically at the top of the page.</div>
+          <div class="faq-q">Q. When does rank reset?</div>
+          <div class="faq-a">A. At the start of each Act. The two yearly hard resets (around January and July) bring the biggest drops.</div>
+          <div class="faq-q">Q. Can I look up past Acts and their start dates?</div>
+          <div class="faq-a">A. Yes — pick a date to find its Season / Act, and browse the full list of Acts since the official release.</div>
+          <div class="faq-q">Q. Is this an official site?</div>
+          <div class="faq-a">A. No. It is an unofficial, fan-made tool created by players.</div>
+        </div>
       </div>
     </div>
 
@@ -729,6 +805,11 @@ function applyLang() {
   });
   document.querySelectorAll(".lang-switch button").forEach(b => {
     b.classList.toggle("active", b.dataset.lang === lang);
+  });
+  // ガイドは日英のみ。日本語以外は英語ブロックを表示
+  const guideLang = lang === "ja" ? "ja" : "en";
+  document.querySelectorAll("[data-guide-lang]").forEach(el => {
+    el.hidden = el.dataset.guideLang !== guideLang;
   });
   renderHero();
   renderTable();
