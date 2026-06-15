@@ -16,17 +16,22 @@
 <meta property="og:title" content="VALORANT 今のシーズン・Act 判定ツール">
 <meta property="og:description" content="VALORANT の今のシーズン / Act を自動表示。日付指定で過去・未来のActも判定できる非公式ツール。">
 <meta property="og:url" content="https://valoact.com/">
-<meta property="og:site_name" content="VALORANT シーズン判定">
+<meta property="og:site_name" content="VALOACT">
+<meta property="og:image" content="https://valoact.com/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="VALORANT 今のシーズン・Act 判定ツール">
 <meta name="twitter:description" content="VALORANT の今のシーズン / Act を自動表示。日付指定で過去・未来のActも判定。">
+<meta name="twitter:image" content="https://valoact.com/ogp.png">
 
 <!-- 構造化データ -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "VALORANT シーズン・Act 判定ツール",
+  "name": "VALOACT",
+  "alternateName": "VALORANT シーズン・Act 判定ツール",
   "applicationCategory": "UtilityApplication",
   "operatingSystem": "Web",
   "description": "VALORANT の今のシーズン / Act を自動表示し、日付指定で過去・未来のActも判定できる非公式ツール。",
@@ -241,10 +246,21 @@
   .guide b { color: var(--text); }
   .guide .faq-q { font-size: 13px; font-weight: 700; color: var(--text); margin: 14px 0 4px; }
   .guide .faq-a { font-size: 13px; color: var(--muted); line-height: 1.8; }
+
+  /* ===== ブランドヘッダー ===== */
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; text-decoration: none; }
+  .brand-logo { width: 30px; height: 30px; display: block; }
+  .brand-name { font-size: 21px; font-weight: 800; letter-spacing: .1em; color: var(--text); }
 </style>
 </head>
 <body>
   <div class="container">
+
+    <!-- ブランドヘッダー -->
+    <a class="brand" href="/">
+      <img class="brand-logo" src="/favicon.svg" alt="VALOACT">
+      <span class="brand-name">VALOACT</span>
+    </a>
 
     <!-- 言語切り替え -->
     <div class="lang-switch">
