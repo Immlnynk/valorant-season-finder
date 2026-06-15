@@ -580,6 +580,7 @@ const I18N = {
   ja: {
     htmlLang: "ja",
     title: "VALOACT｜VALORANT 今のシーズン・Act 確認ツール｜現在のAct残り日数も表示",
+    desc: "VALORANT の「今のシーズン / Act」が一目でわかる無料ツール。現在のActの残り日数や次のランクリセットの時期、過去・未来のSeason / Act も日付から確認できます。全Act一覧つきの非公式ツール。",
     nowLabel: "現在のシーズン",
     heroH1: "VALORANT は今どのシーズン / Act？",
     card1H2: "日付からシーズンを確認",
@@ -621,6 +622,7 @@ const I18N = {
   en: {
     htmlLang: "en",
     title: "VALOACT | VALORANT Current Season & Act Finder | Days Left in the Current Act",
+    desc: "Free tool to instantly see VALORANT's current Season / Act. Check the days left in the current Act, when the next rank reset is, and find past or future Seasons / Acts by date. Includes a full Act list. Unofficial tool.",
     nowLabel: "Current Season",
     heroH1: "What Season / Act is VALORANT in right now?",
     card1H2: "Find the Season by Date",
@@ -662,6 +664,7 @@ const I18N = {
   ko: {
     htmlLang: "ko",
     title: "VALOACT | VALORANT 현재 시즌·Act 확인 도구 | 현재 Act 남은 일수 표시",
+    desc: "VALORANT의 현재 시즌·Act를 한눈에 확인하는 무료 도구. 현재 Act의 남은 일수와 다음 랭크 리셋 시기, 과거·미래의 시즌·Act도 날짜로 확인할 수 있습니다. 전체 Act 목록 포함. 비공식 도구.",
     nowLabel: "현재 시즌",
     heroH1: "VALORANT는 지금 어느 시즌 / Act?",
     card1H2: "날짜로 시즌 확인하기",
@@ -703,6 +706,7 @@ const I18N = {
   zh: {
     htmlLang: "zh",
     title: "VALOACT | VALORANT 当前赛季·Act 查询工具 | 显示当前 Act 剩余天数",
+    desc: "免费工具，一眼查看 VALORANT 当前赛季·Act。查看当前 Act 剩余天数、下次段位重置时间，并可按日期查询过去或未来的赛季·Act。含完整 Act 列表。非官方工具。",
     nowLabel: "当前赛季",
     heroH1: "VALORANT 现在是哪个赛季 / Act？",
     card1H2: "按日期查询赛季",
@@ -744,6 +748,7 @@ const I18N = {
   pt: {
     htmlLang: "pt",
     title: "VALOACT | VALORANT Temporada e Act Atual | Dias Restantes do Act Atual",
+    desc: "Ferramenta grátis para ver na hora a Season / Act atual de VALORANT. Veja os dias restantes do Act atual, quando é o próximo reset de rank e encontre Seasons / Acts passados ou futuros por data. Inclui lista completa. Ferramenta não oficial.",
     nowLabel: "Temporada Atual",
     heroH1: "Em qual Temporada / Act o VALORANT está agora?",
     card1H2: "Descubra a Temporada pela Data",
@@ -786,6 +791,7 @@ const I18N = {
   es: {
     htmlLang: "es",
     title: "VALOACT | VALORANT Temporada y Act Actual | Días Restantes del Act Actual",
+    desc: "Herramienta gratuita para ver al instante la Season / Act actual de VALORANT. Consulta los días que quedan del Act actual, cuándo es el próximo reinicio de rango y encuentra Seasons / Acts pasados o futuros por fecha. Incluye lista completa. Herramienta no oficial.",
     nowLabel: "Temporada Actual",
     heroH1: "¿En qué Temporada / Act está VALORANT ahora?",
     card1H2: "Encuentra la Temporada por Fecha",
@@ -1015,6 +1021,12 @@ function applyLang() {
   const t = I18N[lang];
   document.documentElement.lang = t.htmlLang;
   document.title = t.title;
+  const setMeta = (sel, v) => { const m = document.querySelector(sel); if (m) m.setAttribute("content", v); };
+  setMeta('meta[name="description"]', t.desc);
+  setMeta('meta[property="og:title"]', t.title);
+  setMeta('meta[property="og:description"]', t.desc);
+  setMeta('meta[name="twitter:title"]', t.title);
+  setMeta('meta[name="twitter:description"]', t.desc);
   document.querySelectorAll("[data-i18n]").forEach(el => {
     el.textContent = t[el.dataset.i18n];
   });
