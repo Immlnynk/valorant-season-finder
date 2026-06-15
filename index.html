@@ -148,6 +148,7 @@
 
   /* ===== 現在のシーズン（ヒーロー） ===== */
   .hero {
+    width: 100%;
     background: linear-gradient(135deg, var(--red), var(--red-dark));
     border-radius: 14px;
     padding: 26px 28px;
@@ -168,7 +169,7 @@
   }
   .hero .now-season { font-size: 14px; margin-top: 14px; opacity: .95; }
   .hero .now-act { font-size: 32px; font-weight: 800; margin: 2px 0 12px; letter-spacing: .02em; }
-  .hero .now-meta { font-size: 13px; line-height: 1.8; opacity: .95; }
+  .hero .now-meta { font-size: 13px; line-height: 1.8; opacity: .95; overflow-wrap: anywhere; }
   .hero .now-bar {
     height: 8px; background: rgba(255,255,255,.25);
     border-radius: 4px; overflow: hidden; margin-top: 12px;
@@ -336,6 +337,24 @@
   .countdown.is-urgent .cd-label { color: var(--red); }
   .countdown.is-urgent .cd-unit { border-color: var(--red); }
   .countdown.is-urgent .cd-unit b { animation: cdpulse .7s ease-in-out infinite; }
+
+  /* ===== スマートフォン最適化 ===== */
+  @media (max-width: 480px) {
+    body { padding: 16px 10px 40px; }
+    .hero { padding: 20px 18px; }
+    .hero .now-act { font-size: 28px; }
+    .card .head { padding: 16px 16px 0; }
+    .body { padding: 16px 16px 22px; }
+    .countdown { padding: 16px 12px; }
+    .cd-clock { gap: 6px; }
+    .cd-unit { min-width: 0; padding: 9px 2px; }
+    .cd-unit b { font-size: 25px; }
+    .cd-unit small { font-size: 9px; }
+    .table-wrap { padding: 0 12px 20px; }
+    th, td { padding: 8px 8px; font-size: 12px; }
+    th { font-size: 10px; }
+    .brand-name { font-size: 19px; }
+  }
 </style>
 </head>
 <body>
