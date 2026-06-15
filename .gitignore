@@ -1,0 +1,5 @@
+# バックアップ・OS生成ファイルは公開しない
+index.backup.html
+*.backup.html
+.DS_Store
+Thumbs.db

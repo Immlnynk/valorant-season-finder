@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ===== SEO / OGP ===== -->
+<title>VALORANT 今のシーズン・Act 判定ツール｜現在のAct残り日数も表示</title>
+<meta name="description" content="VALORANT の「今のシーズン / Act」を自動表示。日付を選べば過去・未来のEpisode / Season / Act も一発判定。現在のAct残り日数・進行度・全Act一覧も確認できる非公式ツールです。">
+<meta name="keywords" content="VALORANT,ヴァロラント,シーズン,Act,アクト,Episode,今のシーズン,今のAct,残り日数,ランクリセット">
+<link rel="canonical" href="https://immlnynk.github.io/valorant-season-finder/">
+
+<!-- OGP（SNSシェア用。公開URL確定後に url / image を差し替えてください） -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="VALORANT 今のシーズン・Act 判定ツール">
+<meta property="og:description" content="VALORANT の今のシーズン / Act を自動表示。日付指定で過去・未来のActも判定できる非公式ツール。">
+<meta property="og:url" content="https://immlnynk.github.io/valorant-season-finder/">
+<meta property="og:site_name" content="VALORANT シーズン判定">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VALORANT 今のシーズン・Act 判定ツール">
+<meta name="twitter:description" content="VALORANT の今のシーズン / Act を自動表示。日付指定で過去・未来のActも判定。">
+
+<!-- 構造化データ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "VALORANT シーズン・Act 判定ツール",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Web",
+  "description": "VALORANT の今のシーズン / Act を自動表示し、日付指定で過去・未来のActも判定できる非公式ツール。",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
+}
+</script>
+
+<style>
+  :root {
+    --bg: #0f1923;
+    --panel: #1a242f;
+    --red: #ff4655;
+    --red-dark: #bd3944;
+    --text: #ece8e1;
+    --muted: #8b978f;
+    --line: #2b3640;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+  }
+  .container { width: 100%; max-width: 640px; }
+
+  /* ===== 現在のシーズン（ヒーロー） ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border-radius: 14px;
+    padding: 26px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  }
+  .hero .now-label {
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    opacity: .9;
+  }
+  .hero h1 {
+    font-size: 16px;
+    margin-top: 4px;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+  .hero .now-season { font-size: 14px; margin-top: 14px; opacity: .95; }
+  .hero .now-act { font-size: 32px; font-weight: 800; margin: 2px 0 12px; letter-spacing: .02em; }
+  .hero .now-meta { font-size: 13px; line-height: 1.8; opacity: .95; }
+  .hero .now-bar {
+    height: 8px; background: rgba(255,255,255,.25);
+    border-radius: 4px; overflow: hidden; margin-top: 12px;
+  }
+  .hero .now-bar > span { display: block; height: 100%; background: #fff; }
+
+  .card {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    margin-bottom: 20px;
+  }
+  .card .head {
+    padding: 20px 28px 0;
+  }
+  .card .head h2 {
+    font-size: 15px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .card .head p { margin-top: 6px; font-size: 13px; color: var(--muted); }
+  .body { padding: 20px 28px 28px; }
+  label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  input[type="date"] {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    color-scheme: dark;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input[type="date"]:focus { border-color: var(--red); }
+  .result {
+    margin-top: 24px;
+    padding: 22px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    min-height: 120px;
+  }
+  .season {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .act {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 6px 0 14px;
+    color: var(--red);
+    letter-spacing: .02em;
+  }
+  .meta { font-size: 14px; line-height: 1.9; color: var(--text); }
+  .meta b { color: var(--muted); font-weight: 600; }
+  .bar-wrap { margin-top: 16px; }
+  .bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--red), #ff8a93); }
+  .bar-label { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .empty { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+  /* ===== 全Act一覧テーブル ===== */
+  .table-wrap { padding: 0 28px 28px; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+  td.act-col { color: var(--red); font-weight: 700; }
+  tr.is-current { background: rgba(255,70,85,.10); }
+  tr.is-current td:first-child { border-left: 3px solid var(--red); }
+
+  /* ===== 広告枠 ===== */
+  .ad-slot {
+    width: 100%;
+    max-width: 640px;
+    min-height: 90px;
+    margin: 0 0 20px;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .foot {
+    width: 100%;
+    max-width: 640px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.7;
+    text-align: center;
+    margin-top: 4px;
+  }
+  .foot a { color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- 現在のシーズン（ページを開くと自動表示） -->
+    <div class="hero" id="hero">
+      <div class="now-label">現在のシーズン</div>
+      <h1>VALORANT は今どのシーズン / Act？</h1>
+      <div id="hero-content"></div>
+    </div>
+
+    <!-- 広告枠1（AdSense審査通過後にここへ広告タグを挿入） -->
+    <div class="ad-slot">Advertisement</div>
+
+    <!-- 日付判定ツール -->
+    <div class="card">
+      <div class="head">
+        <h2>日付からシーズンを判定</h2>
+        <p>日付を選ぶと、その時のシーズン / Act を表示します</p>
+      </div>
+      <div class="body">
+        <label for="date">日付を選択</label>
+        <input type="date" id="date">
+        <div class="result" id="result">
+          <div class="empty">上のカレンダーから日付を選んでください。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全Act一覧 -->
+    <div class="card">
+      <div class="head">
+        <h2>シーズン / Act 一覧</h2>
+        <p>VALORANT 正式リリースからの全 Episode / Season・Act の期間一覧</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>シーズン / Episode</th><th>Act</th><th>開始日</th><th>終了日</th></tr>
+          </thead>
+          <tbody id="period-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 広告枠2 -->
+    <div class="ad-slot">Advertisement</div>
+
+    <div class="foot">
+      ※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。
+      Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 3（〜2026/6/24）まで。<br><br>
+      本サイトは VALORANT プレイヤー有志による<b>非公式のファンメイドツール</b>です。
+      Riot Games, Inc. および VALORANT とは一切関係がなく、公式に承認・提携されたものではありません。
+      VALORANT および関連するすべての商標は Riot Games, Inc. に帰属します。
+    </div>
+
+  </div>
+
+<script>
+// 各エントリの start は「その Act の開始日」。end は次の Act の開始日（＝この日から次の Act）。
+const PERIODS = [
+  { start: "2020-06-02", end: "2020-08-04", era: "Episode 1: Ignition",  act: "Act I" },
+  { start: "2020-08-04", end: "2020-10-13", era: "Episode 1: Ignition",  act: "Act II" },
+  { start: "2020-10-13", end: "2021-01-12", era: "Episode 1: Ignition",  act: "Act III" },
+  { start: "2021-01-12", end: "2021-03-02", era: "Episode 2: Formation", act: "Act I" },
+  { start: "2021-03-02", end: "2021-04-27", era: "Episode 2: Formation", act: "Act II" },
+  { start: "2021-04-27", end: "2021-06-22", era: "Episode 2: Formation", act: "Act III" },
+  { start: "2021-06-22", end: "2021-09-08", era: "Episode 3: Reflection", act: "Act I" },
+  { start: "2021-09-08", end: "2021-11-02", era: "Episode 3: Reflection", act: "Act II" },
+  { start: "2021-11-02", end: "2022-01-11", era: "Episode 3: Reflection", act: "Act III" },
+  { start: "2022-01-11", end: "2022-03-01", era: "Episode 4: Disruption", act: "Act I" },
+  { start: "2022-03-01", end: "2022-04-27", era: "Episode 4: Disruption", act: "Act II" },
+  { start: "2022-04-27", end: "2022-06-22", era: "Episode 4: Disruption", act: "Act III" },
+  { start: "2022-06-22", end: "2022-08-23", era: "Episode 5: Dimension", act: "Act I" },
+  { start: "2022-08-23", end: "2022-10-17", era: "Episode 5: Dimension", act: "Act II" },
+  { start: "2022-10-17", end: "2023-01-10", era: "Episode 5: Dimension", act: "Act III" },
+  { start: "2023-01-10", end: "2023-03-06", era: "Episode 6: Revelation", act: "Act I" },
+  { start: "2023-03-06", end: "2023-04-25", era: "Episode 6: Revelation", act: "Act II" },
+  { start: "2023-04-25", end: "2023-06-27", era: "Episode 6: Revelation", act: "Act III" },
+  { start: "2023-06-27", end: "2023-08-29", era: "Episode 7: Evolution", act: "Act I" },
+  { start: "2023-08-29", end: "2023-10-31", era: "Episode 7: Evolution", act: "Act II" },
+  { start: "2023-10-31", end: "2024-01-09", era: "Episode 7: Evolution", act: "Act III" },
+  { start: "2024-01-09", end: "2024-03-05", era: "Episode 8: Defiance", act: "Act I" },
+  { start: "2024-03-05", end: "2024-04-30", era: "Episode 8: Defiance", act: "Act II" },
+  { start: "2024-04-30", end: "2024-06-25", era: "Episode 8: Defiance", act: "Act III" },
+  { start: "2024-06-25", end: "2024-08-28", era: "Episode 9", act: "Act I" },
+  { start: "2024-08-28", end: "2024-10-23", era: "Episode 9", act: "Act II" },
+  { start: "2024-10-23", end: "2025-01-07", era: "Episode 9", act: "Act III" },
+  { start: "2025-01-07", end: "2025-03-05", era: "Season 2025", act: "Act 1" },
+  { start: "2025-03-05", end: "2025-04-30", era: "Season 2025", act: "Act 2" },
+  { start: "2025-04-30", end: "2025-06-25", era: "Season 2025", act: "Act 3" },
+  { start: "2025-06-25", end: "2025-08-20", era: "Season 2025", act: "Act 4" },
+  { start: "2025-08-20", end: "2025-10-15", era: "Season 2025", act: "Act 5" },
+  { start: "2025-10-15", end: "2026-01-07", era: "Season 2025", act: "Act 6" },
+  { start: "2026-01-07", end: "2026-03-18", era: "Season 2026", act: "Act 1" },
+  { start: "2026-03-18", end: "2026-04-29", era: "Season 2026", act: "Act 2" },
+  { start: "2026-04-29", end: "2026-06-24", era: "Season 2026", act: "Act 3" },
+];
+
+const FIRST = PERIODS[0].start;
+const LAST  = PERIODS[PERIODS.length - 1].end;
+
+const resultEl = document.getElementById("result");
+const dateEl = document.getElementById("date");
+
+function fmt(d) {
+  const [y, m, day] = d.split("-");
+  return `${y}年${Number(m)}月${Number(day)}日`;
+}
+function fmtShort(d) {
+  const [y, m, day] = d.split("-");
+  return `${y}/${Number(m)}/${Number(day)}`;
+}
+function daysBetween(a, b) {
+  return Math.round((new Date(b) - new Date(a)) / 86400000);
+}
+
+function show(value) {
+  if (!value) {
+    resultEl.innerHTML = '<div class="empty">上のカレンダーから日付を選んでください。</div>';
+    return;
+  }
+  if (value < FIRST) {
+    resultEl.innerHTML = `<div class="empty">${fmt(value)} は VALORANT 正式リリース（2020年6月2日）より前です。</div>`;
+    return;
+  }
+  if (value >= LAST) {
+    resultEl.innerHTML = `<div class="empty">${fmt(value)} はデータ収録範囲（〜2026年6月24日）より後です。<br>新しい Act が発表されたら追記してください。</div>`;
+    return;
+  }
+  const p = PERIODS.find(p => value >= p.start && value < p.end);
+  const total = daysBetween(p.start, p.end);
+  const elapsed = daysBetween(p.start, value) + 1;
+  const pct = Math.min(100, Math.round(elapsed / total * 100));
+  const remaining = total - elapsed;
+
+  resultEl.innerHTML = `
+    <div class="season">${p.era}</div>
+    <div class="act">${p.act}</div>
+    <div class="meta">
+      <div><b>期間</b>　${fmt(p.start)} 〜 ${fmt(p.end)}</div>
+      <div><b>経過</b>　${total} 日中 ${elapsed} 日目（残り ${remaining} 日）</div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar"><span style="width:${pct}%"></span></div>
+      <div class="bar-label">Act 進行度 ${pct}%</div>
+    </div>`;
+}
+
+// ===== 現在のシーズンをヒーローに表示 =====
+function renderHero() {
+  const today = new Date().toISOString().slice(0, 10);
+  const el = document.getElementById("hero-content");
+  const p = (today >= FIRST && today < LAST)
+    ? PERIODS.find(p => today >= p.start && today < p.end)
+    : null;
+
+  if (!p) {
+    el.innerHTML = `<div class="now-meta" style="margin-top:14px;">
+      現在はデータ収録範囲外です。新しい Act が発表されたらデータを追記してください。</div>`;
+    return;
+  }
+  const total = daysBetween(p.start, p.end);
+  const elapsed = daysBetween(p.start, today) + 1;
+  const pct = Math.min(100, Math.round(elapsed / total * 100));
+  const remaining = total - elapsed;
+
+  el.innerHTML = `
+    <div class="now-season">${p.era}</div>
+    <div class="now-act">${p.act}</div>
+    <div class="now-meta">
+      期間：${fmtShort(p.start)} 〜 ${fmtShort(p.end)}<br>
+      この Act は残り <b>${remaining} 日</b>（進行度 ${pct}%）
+    </div>
+    <div class="now-bar"><span style="width:${pct}%"></span></div>`;
+}
+
+// ===== 全Act一覧テーブルを生成 =====
+function renderTable() {
+  const today = new Date().toISOString().slice(0, 10);
+  const tbody = document.getElementById("period-table");
+  tbody.innerHTML = PERIODS.map(p => {
+    const current = (today >= p.start && today < p.end);
+    return `<tr class="${current ? "is-current" : ""}">
+      <td>${p.era}</td>
+      <td class="act-col">${p.act}</td>
+      <td>${fmtShort(p.start)}</td>
+      <td>${fmtShort(p.end)}</td>
+    </tr>`;
+  }).join("");
+}
+
+dateEl.addEventListener("input", e => show(e.target.value));
+
+// 初期化
+renderHero();
+renderTable();
+
+// 日付入力の初期値：今日（範囲外なら空のまま）
+const today = new Date().toISOString().slice(0, 10);
+if (today >= FIRST && today < LAST) {
+  dateEl.value = today;
+  show(today);
+}
+</script>
+</body>
+</html>
