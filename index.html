@@ -4,12 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0f1923">
 
 <!-- ===== SEO / OGP ===== -->
 <title>VALORANT 今のシーズン・Act 判定ツール｜現在のAct残り日数も表示</title>
-<meta name="description" content="VALORANT の「今のシーズン / Act」を自動表示。日付を選べば過去・未来のEpisode / Season / Act も一発判定。現在のAct残り日数・進行度・全Act一覧も確認できる非公式ツールです。">
+<meta name="description" content="VALORANT の「今のシーズン / Act」が一目でわかる無料ツール。現在のActの残り日数・進行度、次のランクリセットの時期、過去・未来のEpisode / Season / Act も日付から一発判定。全Act一覧つきの非公式ツールです。">
 <meta name="keywords" content="VALORANT,ヴァロラント,シーズン,Act,アクト,Episode,今のシーズン,今のAct,残り日数,ランクリセット">
 <link rel="canonical" href="https://valoact.com/">
+<link rel="alternate" hreflang="ja" href="https://valoact.com/?lang=ja">
+<link rel="alternate" hreflang="en" href="https://valoact.com/?lang=en">
+<link rel="alternate" hreflang="ko" href="https://valoact.com/?lang=ko">
+<link rel="alternate" hreflang="zh-Hans" href="https://valoact.com/?lang=zh">
+<link rel="alternate" hreflang="pt" href="https://valoact.com/?lang=pt">
+<link rel="alternate" hreflang="es" href="https://valoact.com/?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://valoact.com/">
 
 <!-- OGP（SNSシェア用。公開URL確定後に url / image を差し替えてください） -->
 <meta property="og:type" content="website">
@@ -36,6 +46,34 @@
   "operatingSystem": "Web",
   "description": "VALORANT の今のシーズン / Act を自動表示し、日付指定で過去・未来のActも判定できる非公式ツール。",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "VALORANT は今どのシーズン・Act ですか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "ページ上部に現在の Season / Act と残り日数を自動表示しています。日付を選べば過去・未来の Act も判定できます。" }
+    },
+    {
+      "@type": "Question",
+      "name": "VALORANT のランクはいつリセットされますか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "各 Act の開始時にリセットされます。特に年2回のハードリセット（1月ごろと7月ごろ）は下げ幅が大きくなります。次の Act 開始日＝次のランクリセット日です。" }
+    },
+    {
+      "@type": "Question",
+      "name": "過去の Act や開始日を調べられますか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "日付を選べばその時の Season / Act を判定でき、VALORANT 正式リリース以降の全 Act 一覧も確認できます。" }
+    },
+    {
+      "@type": "Question",
+      "name": "VALOACT は公式サイトですか？",
+      "acceptedAnswer": { "@type": "Answer", "text": "いいえ。プレイヤー有志による非公式のファンメイドツールです。VALORANT および関連商標は Riot Games, Inc. に帰属します。" }
+    }
+  ]
 }
 </script>
 
@@ -471,7 +509,7 @@ const I18N = {
     elapsedDaysOpen: elapsed => `開始から ${elapsed} 日目`,
     openNote: "※ 終了日が未発表のため、残り日数と進行度は表示できません。",
     heroPeriod: (s, e) => `期間：${s} 〜 ${e}`,
-    heroRemaining: (remaining, pct) => `この Act は残り <b>${remaining} 日</b>（進行度 ${pct}%）`,
+    heroRemaining: (remaining, pct) => `この Act は残り <b>${remaining} 日</b>（進行度 ${pct}%）＝次のランクリセットまでの日数`,
     heroOpen: elapsed => `進行中（開始から <b>${elapsed} 日目</b>）。終了日が未発表のため残り日数は計算できません。`,
     heroOut: "現在はデータ収録範囲外です。新しい Act が発表されたらデータを追記してください。",
     navAbout: "運営者情報・お問い合わせ",
@@ -508,7 +546,7 @@ const I18N = {
     elapsedDaysOpen: elapsed => `Day ${elapsed} since start`,
     openNote: "* Days left and progress are unavailable until the end date is announced.",
     heroPeriod: (s, e) => `Period: ${s} – ${e}`,
-    heroRemaining: (remaining, pct) => `<b>${remaining} days</b> left in this Act (progress ${pct}%)`,
+    heroRemaining: (remaining, pct) => `<b>${remaining} days</b> left in this Act (progress ${pct}%) — that's the countdown to the next rank reset.`,
     heroOpen: elapsed => `In progress (<b>day ${elapsed}</b>). Days left can't be calculated until the end date is announced.`,
     heroOut: "Today is outside the recorded data range. Please add new Acts once they are announced.",
     navAbout: "About & Contact",
@@ -545,7 +583,7 @@ const I18N = {
     elapsedDaysOpen: elapsed => `시작 후 ${elapsed}일째`,
     openNote: "※ 종료일이 미정이므로 남은 일수와 진행도를 표시할 수 없습니다.",
     heroPeriod: (s, e) => `기간: ${s} ~ ${e}`,
-    heroRemaining: (remaining, pct) => `이 Act는 <b>${remaining}일</b> 남음 (진행도 ${pct}%)`,
+    heroRemaining: (remaining, pct) => `이 Act는 <b>${remaining}일</b> 남음 (진행도 ${pct}%) — 다음 랭크 리셋까지 남은 일수입니다.`,
     heroOpen: elapsed => `진행 중 (시작 후 <b>${elapsed}일째</b>). 종료일이 미정이라 남은 일수를 계산할 수 없습니다.`,
     heroOut: "현재 데이터 수록 범위를 벗어났습니다. 새로운 Act가 발표되면 추가해 주세요.",
     navAbout: "운영자 정보·문의",
@@ -582,7 +620,7 @@ const I18N = {
     elapsedDaysOpen: elapsed => `开始后第 ${elapsed} 天`,
     openNote: "※ 结束日期待定，无法显示剩余天数和进度。",
     heroPeriod: (s, e) => `期间：${s} ~ ${e}`,
-    heroRemaining: (remaining, pct) => `本 Act 还剩 <b>${remaining} 天</b>（进度 ${pct}%）`,
+    heroRemaining: (remaining, pct) => `本 Act 还剩 <b>${remaining} 天</b>（进度 ${pct}%）——也是距离下次段位重置的天数。`,
     heroOpen: elapsed => `进行中（开始后第 <b>${elapsed} 天</b>）。结束日期待定，无法计算剩余天数。`,
     heroOut: "当前超出数据收录范围。有新的 Act 公布后请补充数据。",
     navAbout: "关于·联系",
@@ -619,7 +657,7 @@ const I18N = {
     elapsedDaysOpen: elapsed => `Dia ${elapsed} desde o início`,
     openNote: "* Dias restantes e progresso indisponíveis até a data de término ser anunciada.",
     heroPeriod: (s, e) => `Período: ${s} – ${e}`,
-    heroRemaining: (remaining, pct) => `<b>${remaining} dias</b> restantes neste Act (progresso ${pct}%)`,
+    heroRemaining: (remaining, pct) => `<b>${remaining} dias</b> restantes neste Act (progresso ${pct}%) — contagem até o próximo reset de rank.`,
     heroOpen: elapsed => `Em andamento (<b>dia ${elapsed}</b>). Os dias restantes não podem ser calculados até a data de término ser anunciada.`,
     heroOut: "Hoje está fora do intervalo de dados registrado. Adicione novos Acts quando forem anunciados.",
     navAbout: "Sobre e Contato",
@@ -657,7 +695,7 @@ const I18N = {
     elapsedDaysOpen: elapsed => `Día ${elapsed} desde el inicio`,
     openNote: "* Los días restantes y el progreso no están disponibles hasta que se anuncie la fecha de finalización.",
     heroPeriod: (s, e) => `Período: ${s} – ${e}`,
-    heroRemaining: (remaining, pct) => `<b>${remaining} días</b> restantes en este Act (progreso ${pct}%)`,
+    heroRemaining: (remaining, pct) => `<b>${remaining} días</b> restantes en este Act (progreso ${pct}%) — cuenta atrás para el próximo reinicio de rango.`,
     heroOpen: elapsed => `En curso (<b>día ${elapsed}</b>). Los días restantes no se pueden calcular hasta que se anuncie la fecha de finalización.`,
     heroOut: "Hoy está fuera del rango de datos registrado. Agrega nuevos Acts cuando se anuncien.",
     navAbout: "Acerca de y Contacto",
@@ -674,7 +712,9 @@ const I18N = {
 
 const SUPPORTED = ["ja", "en", "ko", "zh", "pt", "es"];
 const navLang = (navigator.language || "en").slice(0, 2).toLowerCase();
-let lang = localStorage.getItem("vsf-lang") || (SUPPORTED.includes(navLang) ? navLang : "en");
+const qLang = new URLSearchParams(location.search).get("lang");
+let lang = (qLang && SUPPORTED.includes(qLang)) ? qLang
+  : (localStorage.getItem("vsf-lang") || (SUPPORTED.includes(navLang) ? navLang : "en"));
 
 const resultEl = document.getElementById("result");
 const dateEl = document.getElementById("date");
