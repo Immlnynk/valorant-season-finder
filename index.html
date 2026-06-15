@@ -56,6 +56,32 @@
   }
   .container { width: 100%; max-width: 640px; }
 
+  /* ===== 言語切り替え ===== */
+  .lang-switch {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+  .lang-switch button {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-family: inherit;
+    letter-spacing: .04em;
+    background: var(--panel);
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s;
+  }
+  .lang-switch button:hover { color: var(--text); }
+  .lang-switch button.active {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+  }
+
   /* ===== 現在のシーズン（ヒーロー） ===== */
   .hero {
     background: linear-gradient(135deg, var(--red), var(--red-dark));
@@ -150,11 +176,13 @@
   }
   .meta { font-size: 14px; line-height: 1.9; color: var(--text); }
   .meta b { color: var(--muted); font-weight: 600; }
+  .meta .note { color: var(--muted); font-size: 13px; }
   .bar-wrap { margin-top: 16px; }
   .bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
   .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--red), #ff8a93); }
   .bar-label { font-size: 12px; color: var(--muted); margin-top: 6px; }
   .empty { color: var(--muted); font-size: 14px; line-height: 1.7; }
+  .tba { color: var(--muted); }
 
   /* ===== 全Act一覧テーブル ===== */
   .table-wrap { padding: 0 28px 28px; overflow-x: auto; }
@@ -197,10 +225,16 @@
 <body>
   <div class="container">
 
+    <!-- 言語切り替え -->
+    <div class="lang-switch">
+      <button type="button" data-lang="ja">日本語</button>
+      <button type="button" data-lang="en">English</button>
+    </div>
+
     <!-- 現在のシーズン（ページを開くと自動表示） -->
     <div class="hero" id="hero">
-      <div class="now-label">現在のシーズン</div>
-      <h1>VALORANT は今どのシーズン / Act？</h1>
+      <div class="now-label" data-i18n="nowLabel">現在のシーズン</div>
+      <h1 data-i18n="heroH1">VALORANT は今どのシーズン / Act？</h1>
       <div id="hero-content"></div>
     </div>
 
@@ -210,11 +244,11 @@
     <!-- 日付判定ツール -->
     <div class="card">
       <div class="head">
-        <h2>日付からシーズンを判定</h2>
-        <p>日付を選ぶと、その時のシーズン / Act を表示します</p>
+        <h2 data-i18n="card1H2">日付からシーズンを判定</h2>
+        <p data-i18n="card1P">日付を選ぶと、その時のシーズン / Act を表示します</p>
       </div>
       <div class="body">
-        <label for="date">日付を選択</label>
+        <label for="date" data-i18n="dateLabel">日付を選択</label>
         <input type="date" id="date">
         <div class="result" id="result">
           <div class="empty">上のカレンダーから日付を選んでください。</div>
@@ -225,13 +259,18 @@
     <!-- 全Act一覧 -->
     <div class="card">
       <div class="head">
-        <h2>シーズン / Act 一覧</h2>
-        <p>VALORANT 正式リリースからの全 Episode / Season・Act の期間一覧</p>
+        <h2 data-i18n="card2H2">シーズン / Act 一覧</h2>
+        <p data-i18n="card2P">VALORANT 正式リリースからの全 Episode / Season・Act の期間一覧</p>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>シーズン / Episode</th><th>Act</th><th>開始日</th><th>終了日</th></tr>
+            <tr>
+              <th data-i18n="thEra">シーズン / Episode</th>
+              <th data-i18n="thAct">Act</th>
+              <th data-i18n="thStart">開始日</th>
+              <th data-i18n="thEnd">終了日</th>
+            </tr>
           </thead>
           <tbody id="period-table"></tbody>
         </table>
@@ -241,18 +280,13 @@
     <!-- 広告枠2 -->
     <div class="ad-slot">Advertisement</div>
 
-    <div class="foot">
-      ※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。
-      Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 3（〜2026/6/24）まで。<br><br>
-      本サイトは VALORANT プレイヤー有志による<b>非公式のファンメイドツール</b>です。
-      Riot Games, Inc. および VALORANT とは一切関係がなく、公式に承認・提携されたものではありません。
-      VALORANT および関連するすべての商標は Riot Games, Inc. に帰属します。
-    </div>
+    <div class="foot" data-i18n-html="foot"></div>
 
   </div>
 
 <script>
 // 各エントリの start は「その Act の開始日」。end は次の Act の開始日（＝この日から次の Act）。
+// end が null の Act は「現在進行中で終了日が未発表」を表す。
 const PERIODS = [
   { start: "2020-06-02", end: "2020-08-04", era: "Episode 1: Ignition",  act: "Act I" },
   { start: "2020-08-04", end: "2020-10-13", era: "Episode 1: Ignition",  act: "Act II" },
@@ -290,42 +324,142 @@ const PERIODS = [
   { start: "2026-01-07", end: "2026-03-18", era: "Season 2026", act: "Act 1" },
   { start: "2026-03-18", end: "2026-04-29", era: "Season 2026", act: "Act 2" },
   { start: "2026-04-29", end: "2026-06-24", era: "Season 2026", act: "Act 3" },
+  { start: "2026-06-24", end: null,         era: "Season 2026", act: "Act 4" },
 ];
 
 const FIRST = PERIODS[0].start;
-const LAST  = PERIODS[PERIODS.length - 1].end;
+const MONTHS_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+// ===== 多言語辞書 =====
+const I18N = {
+  ja: {
+    htmlLang: "ja",
+    title: "VALORANT 今のシーズン・Act 判定ツール｜現在のAct残り日数も表示",
+    nowLabel: "現在のシーズン",
+    heroH1: "VALORANT は今どのシーズン / Act？",
+    card1H2: "日付からシーズンを判定",
+    card1P: "日付を選ぶと、その時のシーズン / Act を表示します",
+    dateLabel: "日付を選択",
+    card2H2: "シーズン / Act 一覧",
+    card2P: "VALORANT 正式リリースからの全 Episode / Season・Act の期間一覧",
+    thEra: "シーズン / Episode",
+    thAct: "Act",
+    thStart: "開始日",
+    thEnd: "終了日",
+    tba: "未発表",
+    emptyDefault: "上のカレンダーから日付を選んでください。",
+    beforeRelease: d => `${d} は VALORANT 正式リリース（2020年6月2日）より前です。`,
+    afterRange: d => `${d} はデータ収録範囲より後です。<br>新しい Act が発表されたら追記してください。`,
+    periodLabel: "期間",
+    elapsedLabel: "経過",
+    progressLabel: pct => `Act 進行度 ${pct}%`,
+    elapsedDays: (total, elapsed, remaining) => `${total} 日中 ${elapsed} 日目（残り ${remaining} 日）`,
+    elapsedDaysOpen: elapsed => `開始から ${elapsed} 日目`,
+    openNote: "※ 終了日が未発表のため、残り日数と進行度は表示できません。",
+    heroPeriod: (s, e) => `期間：${s} 〜 ${e}`,
+    heroRemaining: (remaining, pct) => `この Act は残り <b>${remaining} 日</b>（進行度 ${pct}%）`,
+    heroOpen: elapsed => `進行中（開始から <b>${elapsed} 日目</b>）。終了日が未発表のため残り日数は計算できません。`,
+    heroOut: "現在はデータ収録範囲外です。新しい Act が発表されたらデータを追記してください。",
+    foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
+          'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
+          'Act 4 の終了日は公式未発表です。<br><br>' +
+          '本サイトは VALORANT プレイヤー有志による<b>非公式のファンメイドツール</b>です。' +
+          'Riot Games, Inc. および VALORANT とは一切関係がなく、公式に承認・提携されたものではありません。' +
+          'VALORANT および関連するすべての商標は Riot Games, Inc. に帰属します。',
+  },
+  en: {
+    htmlLang: "en",
+    title: "VALORANT Current Season & Act Finder | Days Left in the Current Act",
+    nowLabel: "Current Season",
+    heroH1: "What Season / Act is VALORANT in right now?",
+    card1H2: "Find the Season by Date",
+    card1P: "Pick a date to see which Season / Act it fell in",
+    dateLabel: "Select a date",
+    card2H2: "Season / Act List",
+    card2P: "Every Episode / Season and Act period since VALORANT's official release",
+    thEra: "Season / Episode",
+    thAct: "Act",
+    thStart: "Start",
+    thEnd: "End",
+    tba: "TBA",
+    emptyDefault: "Pick a date from the calendar above.",
+    beforeRelease: d => `${d} is before VALORANT's official release (June 2, 2020).`,
+    afterRange: d => `${d} is beyond the data range.<br>Please add new Acts once they are announced.`,
+    periodLabel: "Period",
+    elapsedLabel: "Progress",
+    progressLabel: pct => `Act progress ${pct}%`,
+    elapsedDays: (total, elapsed, remaining) => `Day ${elapsed} of ${total} (${remaining} days left)`,
+    elapsedDaysOpen: elapsed => `Day ${elapsed} since start`,
+    openNote: "* Days left and progress are unavailable until the end date is announced.",
+    heroPeriod: (s, e) => `Period: ${s} – ${e}`,
+    heroRemaining: (remaining, pct) => `<b>${remaining} days</b> left in this Act (progress ${pct}%)`,
+    heroOpen: elapsed => `In progress (<b>day ${elapsed}</b>). Days left can't be calculated until the end date is announced.`,
+    heroOut: "Today is outside the recorded data range. Please add new Acts once they are announced.",
+    foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
+          "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
+          "Act 4's end date has not been officially announced.<br><br>" +
+          "This is an <b>unofficial fan-made tool</b> by VALORANT players. " +
+          "It is not affiliated with, endorsed, or sponsored by Riot Games, Inc. or VALORANT. " +
+          "VALORANT and all related trademarks belong to Riot Games, Inc.",
+  },
+};
+
+let lang = localStorage.getItem("vsf-lang") || (navigator.language && navigator.language.startsWith("ja") ? "ja" : "en");
 
 const resultEl = document.getElementById("result");
 const dateEl = document.getElementById("date");
 
 function fmt(d) {
-  const [y, m, day] = d.split("-");
-  return `${y}年${Number(m)}月${Number(day)}日`;
+  const [y, m, day] = d.split("-").map(Number);
+  return lang === "ja" ? `${y}年${m}月${day}日` : `${MONTHS_EN[m - 1]} ${day}, ${y}`;
 }
 function fmtShort(d) {
-  const [y, m, day] = d.split("-");
-  return `${y}/${Number(m)}/${Number(day)}`;
+  const [y, m, day] = d.split("-").map(Number);
+  return lang === "ja" ? `${y}/${m}/${day}` : `${MONTHS_EN[m - 1]} ${day}, ${y}`;
 }
 function daysBetween(a, b) {
   return Math.round((new Date(b) - new Date(a)) / 86400000);
 }
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+// value が属する Act を返す（end が null の Act は開始日以降すべてにマッチ）
+function findPeriod(value) {
+  return PERIODS.find(p => value >= p.start && (p.end === null || value < p.end));
+}
 
 function show(value) {
+  const t = I18N[lang];
   if (!value) {
-    resultEl.innerHTML = '<div class="empty">上のカレンダーから日付を選んでください。</div>';
+    resultEl.innerHTML = `<div class="empty">${t.emptyDefault}</div>`;
     return;
   }
   if (value < FIRST) {
-    resultEl.innerHTML = `<div class="empty">${fmt(value)} は VALORANT 正式リリース（2020年6月2日）より前です。</div>`;
+    resultEl.innerHTML = `<div class="empty">${t.beforeRelease(fmt(value))}</div>`;
     return;
   }
-  if (value >= LAST) {
-    resultEl.innerHTML = `<div class="empty">${fmt(value)} はデータ収録範囲（〜2026年6月24日）より後です。<br>新しい Act が発表されたら追記してください。</div>`;
+  const p = findPeriod(value);
+  if (!p) {
+    resultEl.innerHTML = `<div class="empty">${t.afterRange(fmt(value))}</div>`;
     return;
   }
-  const p = PERIODS.find(p => value >= p.start && value < p.end);
-  const total = daysBetween(p.start, p.end);
+
   const elapsed = daysBetween(p.start, value) + 1;
+
+  // 終了日が未発表の Act：残り日数・進行度バーは出さない
+  if (p.end === null) {
+    resultEl.innerHTML = `
+      <div class="season">${p.era}</div>
+      <div class="act">${p.act}</div>
+      <div class="meta">
+        <div><b>${t.periodLabel}</b>　${fmt(p.start)} 〜 <span class="tba">${t.tba}</span></div>
+        <div><b>${t.elapsedLabel}</b>　${t.elapsedDaysOpen(elapsed)}</div>
+        <div class="note">${t.openNote}</div>
+      </div>`;
+    return;
+  }
+
+  const total = daysBetween(p.start, p.end);
   const pct = Math.min(100, Math.round(elapsed / total * 100));
   const remaining = total - elapsed;
 
@@ -333,30 +467,40 @@ function show(value) {
     <div class="season">${p.era}</div>
     <div class="act">${p.act}</div>
     <div class="meta">
-      <div><b>期間</b>　${fmt(p.start)} 〜 ${fmt(p.end)}</div>
-      <div><b>経過</b>　${total} 日中 ${elapsed} 日目（残り ${remaining} 日）</div>
+      <div><b>${t.periodLabel}</b>　${fmt(p.start)} 〜 ${fmt(p.end)}</div>
+      <div><b>${t.elapsedLabel}</b>　${t.elapsedDays(total, elapsed, remaining)}</div>
     </div>
     <div class="bar-wrap">
       <div class="bar"><span style="width:${pct}%"></span></div>
-      <div class="bar-label">Act 進行度 ${pct}%</div>
+      <div class="bar-label">${t.progressLabel(pct)}</div>
     </div>`;
 }
 
 // ===== 現在のシーズンをヒーローに表示 =====
 function renderHero() {
-  const today = new Date().toISOString().slice(0, 10);
+  const t = I18N[lang];
+  const today = todayStr();
   const el = document.getElementById("hero-content");
-  const p = (today >= FIRST && today < LAST)
-    ? PERIODS.find(p => today >= p.start && today < p.end)
-    : null;
+  const p = (today >= FIRST) ? findPeriod(today) : null;
 
   if (!p) {
-    el.innerHTML = `<div class="now-meta" style="margin-top:14px;">
-      現在はデータ収録範囲外です。新しい Act が発表されたらデータを追記してください。</div>`;
+    el.innerHTML = `<div class="now-meta" style="margin-top:14px;">${t.heroOut}</div>`;
     return;
   }
-  const total = daysBetween(p.start, p.end);
   const elapsed = daysBetween(p.start, today) + 1;
+
+  if (p.end === null) {
+    el.innerHTML = `
+      <div class="now-season">${p.era}</div>
+      <div class="now-act">${p.act}</div>
+      <div class="now-meta">
+        ${t.heroPeriod(fmtShort(p.start), t.tba)}<br>
+        ${t.heroOpen(elapsed)}
+      </div>`;
+    return;
+  }
+
+  const total = daysBetween(p.start, p.end);
   const pct = Math.min(100, Math.round(elapsed / total * 100));
   const remaining = total - elapsed;
 
@@ -364,39 +508,67 @@ function renderHero() {
     <div class="now-season">${p.era}</div>
     <div class="now-act">${p.act}</div>
     <div class="now-meta">
-      期間：${fmtShort(p.start)} 〜 ${fmtShort(p.end)}<br>
-      この Act は残り <b>${remaining} 日</b>（進行度 ${pct}%）
+      ${t.heroPeriod(fmtShort(p.start), fmtShort(p.end))}<br>
+      ${t.heroRemaining(remaining, pct)}
     </div>
     <div class="now-bar"><span style="width:${pct}%"></span></div>`;
 }
 
 // ===== 全Act一覧テーブルを生成 =====
 function renderTable() {
-  const today = new Date().toISOString().slice(0, 10);
+  const t = I18N[lang];
+  const today = todayStr();
   const tbody = document.getElementById("period-table");
   tbody.innerHTML = PERIODS.map(p => {
-    const current = (today >= p.start && today < p.end);
+    const current = (today >= p.start && (p.end === null || today < p.end));
+    const endCell = p.end === null ? `<span class="tba">${t.tba}</span>` : fmtShort(p.end);
     return `<tr class="${current ? "is-current" : ""}">
       <td>${p.era}</td>
       <td class="act-col">${p.act}</td>
       <td>${fmtShort(p.start)}</td>
-      <td>${fmtShort(p.end)}</td>
+      <td>${endCell}</td>
     </tr>`;
   }).join("");
 }
 
+// ===== 言語を適用 =====
+function applyLang() {
+  const t = I18N[lang];
+  document.documentElement.lang = t.htmlLang;
+  document.title = t.title;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = t[el.dataset.i18n];
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => {
+    el.innerHTML = t[el.dataset.i18nHtml];
+  });
+  document.querySelectorAll(".lang-switch button").forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === lang);
+  });
+  renderHero();
+  renderTable();
+  show(dateEl.value);
+}
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem("vsf-lang", l);
+  applyLang();
+}
+
+document.querySelectorAll(".lang-switch button").forEach(b => {
+  b.addEventListener("click", () => setLang(b.dataset.lang));
+});
 dateEl.addEventListener("input", e => show(e.target.value));
 
-// 初期化
-renderHero();
-renderTable();
-
-// 日付入力の初期値：今日（範囲外なら空のまま）
-const today = new Date().toISOString().slice(0, 10);
-if (today >= FIRST && today < LAST) {
+// 日付入力の初期値：今日（収録範囲内なら）
+const today = todayStr();
+if (today >= FIRST && findPeriod(today)) {
   dateEl.value = today;
-  show(today);
 }
+
+// 初期化（言語適用の中で hero / table / result をまとめて描画）
+applyLang();
 </script>
 </body>
 </html>
