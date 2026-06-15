@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="valoact">
+  <rect width="32" height="32" rx="7" fill="#0f1923"/>
+  <g stroke="#ff4655" stroke-width="2.4" stroke-linecap="round">
+    <line x1="16" y1="3.5" x2="16" y2="7.5"/>
+    <line x1="16" y1="24.5" x2="16" y2="28.5"/>
+    <line x1="3.5" y1="16" x2="7.5" y2="16"/>
+    <line x1="24.5" y1="16" x2="28.5" y2="16"/>
+  </g>
+  <path d="M10.5 11 L16 21 L21.5 11" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
