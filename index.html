@@ -254,7 +254,8 @@
   th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
   th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
   td.act-col { color: var(--red); font-weight: 700; }
-  tr.is-current { background: rgba(255,70,85,.10); }
+  tr.is-current { animation: rowpulse 2.2s ease-in-out infinite; }
+  @keyframes rowpulse { 0%,100% { background: rgba(255,70,85,.07); } 50% { background: rgba(255,70,85,.20); } }
   tr.is-current td:first-child { border-left: 3px solid var(--red); }
 
   /* ===== 広告枠 ===== */
@@ -330,6 +331,11 @@
   @keyframes cdpulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
   .cd-tba { font-size: 16px; font-weight: 700; color: var(--text); padding: 6px 0; }
   .hero .now-bar > span { transition: width .8s ease; }
+  /* 残り3日以下の緊急表示 */
+  .countdown.is-urgent { border-color: var(--red); box-shadow: 0 0 0 1px var(--red), 0 0 24px rgba(255,70,85,.35); }
+  .countdown.is-urgent .cd-label { color: var(--red); }
+  .countdown.is-urgent .cd-unit { border-color: var(--red); }
+  .countdown.is-urgent .cd-unit b { animation: cdpulse .7s ease-in-out infinite; }
 </style>
 </head>
 <body>
@@ -919,7 +925,11 @@ function renderHero() {
       ${t.heroPeriod(fmtShort(p.start), fmtShort(p.end))}<br>
       ${t.heroRemaining(remaining, pct)}
     </div>
-    <div class="now-bar"><span style="width:${pct}%"></span></div>`;
+    <div class="now-bar"><span style="width:0%"></span></div>`;
+  requestAnimationFrame(() => {
+    const bar = el.querySelector(".now-bar > span");
+    if (bar) bar.style.width = pct + "%";
+  });
 }
 
 // ===== 全Act一覧テーブルを生成 =====
@@ -961,15 +971,18 @@ function renderCountdown() {
   tickCountdown();
 }
 function tickCountdown() {
+  const el = document.getElementById("countdown");
   const cur = findPeriod(todayStr());
-  if (!cur || cur.end === null) return;
+  if (!cur || cur.end === null) { el.classList.remove("is-urgent"); return; }
   const diff = new Date(cur.end) - new Date();
   if (diff <= 0) { renderHero(); renderCountdown(); return; }
+  const days = Math.floor(diff / 86400000);
   const pad = n => String(n).padStart(2, "0");
-  document.getElementById("cd-d").textContent = Math.floor(diff / 86400000);
+  document.getElementById("cd-d").textContent = days;
   document.getElementById("cd-h").textContent = pad(Math.floor((diff % 86400000) / 3600000));
   document.getElementById("cd-m").textContent = pad(Math.floor((diff % 3600000) / 60000));
   document.getElementById("cd-s").textContent = pad(Math.floor((diff % 60000) / 1000));
+  el.classList.toggle("is-urgent", days <= 3);
 }
 setInterval(() => {
   const el = document.getElementById("countdown");
