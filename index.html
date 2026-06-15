@@ -311,6 +311,25 @@
   .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; text-decoration: none; }
   .brand-logo { width: 30px; height: 30px; display: block; }
   .brand-name { font-size: 21px; font-weight: 800; letter-spacing: .1em; color: var(--text); }
+
+  /* ===== カウントダウン ===== */
+  .countdown {
+    width: 100%; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; padding: 18px 20px; margin-bottom: 20px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  }
+  .cd-label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .cd-clock { display: flex; justify-content: center; gap: 8px; }
+  .cd-unit {
+    display: flex; flex-direction: column; align-items: center; min-width: 60px; flex: 1; max-width: 80px;
+    background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 4px;
+  }
+  .cd-unit b { font-size: 30px; font-weight: 800; color: var(--red); font-variant-numeric: tabular-nums; line-height: 1; }
+  .cd-unit small { font-size: 10px; letter-spacing: .06em; color: var(--muted); margin-top: 7px; text-transform: uppercase; }
+  #cd-s { animation: cdpulse 1s ease-in-out infinite; }
+  @keyframes cdpulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
+  .cd-tba { font-size: 16px; font-weight: 700; color: var(--text); padding: 6px 0; }
+  .hero .now-bar > span { transition: width .8s ease; }
 </style>
 </head>
 <body>
@@ -337,6 +356,18 @@
       <div class="now-label" data-i18n="nowLabel">現在のシーズン</div>
       <h1 data-i18n="heroH1">VALORANT は今どのシーズン / Act？</h1>
       <div id="hero-content"></div>
+    </div>
+
+    <!-- カウントダウン（次のAct/ランクリセットまで・毎秒更新） -->
+    <div class="countdown" id="countdown" hidden>
+      <div class="cd-label" id="cd-label"></div>
+      <div class="cd-clock" id="cd-clock">
+        <div class="cd-unit"><b id="cd-d">0</b><small id="cd-dl"></small></div>
+        <div class="cd-unit"><b id="cd-h">00</b><small id="cd-hl"></small></div>
+        <div class="cd-unit"><b id="cd-m">00</b><small id="cd-ml"></small></div>
+        <div class="cd-unit"><b id="cd-s">00</b><small id="cd-sl"></small></div>
+      </div>
+      <div class="cd-tba" id="cd-tba" hidden></div>
     </div>
 
     <!-- 広告枠1（AdSense審査通過後にここへ広告タグを挿入） -->
@@ -550,6 +581,9 @@ const I18N = {
     navAbout: "運営者情報・お問い合わせ",
     navPrivacy: "プライバシーポリシー",
     navSupport: "応援する",
+    cdLabel: "次の Act・ランクリセットまで",
+    cdD: "日", cdH: "時間", cdM: "分", cdS: "秒",
+    cdTBA: "終了日は未発表です",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
           'Act 4 の終了日は公式未発表です。<br><br>' +
@@ -588,6 +622,9 @@ const I18N = {
     navAbout: "About & Contact",
     navPrivacy: "Privacy Policy",
     navSupport: "Support",
+    cdLabel: "Until the next Act / rank reset",
+    cdD: "days", cdH: "hrs", cdM: "min", cdS: "sec",
+    cdTBA: "End date not announced yet",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
           "Act 4's end date has not been officially announced.<br><br>" +
@@ -626,6 +663,9 @@ const I18N = {
     navAbout: "운영자 정보·문의",
     navPrivacy: "개인정보처리방침",
     navSupport: "후원하기",
+    cdLabel: "다음 Act·랭크 리셋까지",
+    cdD: "일", cdH: "시간", cdM: "분", cdS: "초",
+    cdTBA: "종료일 미발표",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
           'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
@@ -664,6 +704,9 @@ const I18N = {
     navAbout: "关于·联系",
     navPrivacy: "隐私政策",
     navSupport: "支持本站",
+    cdLabel: "距离下个 Act·段位重置",
+    cdD: "天", cdH: "时", cdM: "分", cdS: "秒",
+    cdTBA: "结束日期未公布",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
           'Act 4 的结束日期尚未官方公布。<br><br>' +
@@ -702,6 +745,9 @@ const I18N = {
     navAbout: "Sobre e Contato",
     navPrivacy: "Política de Privacidade",
     navSupport: "Apoiar",
+    cdLabel: "Até o próximo Act / reset de rank",
+    cdD: "dias", cdH: "h", cdM: "min", cdS: "seg",
+    cdTBA: "Data de término ainda não anunciada",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
           'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
@@ -741,6 +787,9 @@ const I18N = {
     navAbout: "Acerca de y Contacto",
     navPrivacy: "Política de Privacidad",
     navSupport: "Apoyar",
+    cdLabel: "Hasta el próximo Act / reinicio de rango",
+    cdD: "días", cdH: "h", cdM: "min", cdS: "seg",
+    cdTBA: "Fecha de fin aún no anunciada",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
           'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
@@ -890,6 +939,43 @@ function renderTable() {
   }).join("");
 }
 
+// ===== カウントダウン（次のAct/ランクリセットまで） =====
+function renderCountdown() {
+  const t = I18N[lang];
+  const el = document.getElementById("countdown");
+  const clock = document.getElementById("cd-clock");
+  const tba = document.getElementById("cd-tba");
+  document.getElementById("cd-label").textContent = t.cdLabel;
+  document.getElementById("cd-dl").textContent = t.cdD;
+  document.getElementById("cd-hl").textContent = t.cdH;
+  document.getElementById("cd-ml").textContent = t.cdM;
+  document.getElementById("cd-sl").textContent = t.cdS;
+  tba.textContent = t.cdTBA;
+  const cur = findPeriod(todayStr());
+  if (!cur) { el.hidden = true; return; }
+  el.hidden = false;
+  if (cur.end === null) {
+    clock.hidden = true; tba.hidden = false; return;
+  }
+  clock.hidden = false; tba.hidden = true;
+  tickCountdown();
+}
+function tickCountdown() {
+  const cur = findPeriod(todayStr());
+  if (!cur || cur.end === null) return;
+  const diff = new Date(cur.end) - new Date();
+  if (diff <= 0) { renderHero(); renderCountdown(); return; }
+  const pad = n => String(n).padStart(2, "0");
+  document.getElementById("cd-d").textContent = Math.floor(diff / 86400000);
+  document.getElementById("cd-h").textContent = pad(Math.floor((diff % 86400000) / 3600000));
+  document.getElementById("cd-m").textContent = pad(Math.floor((diff % 3600000) / 60000));
+  document.getElementById("cd-s").textContent = pad(Math.floor((diff % 60000) / 1000));
+}
+setInterval(() => {
+  const el = document.getElementById("countdown");
+  if (el && !el.hidden) tickCountdown();
+}, 1000);
+
 // ===== 言語を適用 =====
 function applyLang() {
   const t = I18N[lang];
@@ -911,6 +997,7 @@ function applyLang() {
   });
   renderHero();
   renderTable();
+  renderCountdown();
   show(dateEl.value);
 }
 
