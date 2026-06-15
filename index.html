@@ -221,6 +221,12 @@
     margin-top: 4px;
   }
   .foot a { color: var(--muted); }
+  .foot-nav {
+    width: 100%; max-width: 640px; text-align: center;
+    margin-top: 14px; font-size: 12px;
+  }
+  .foot-nav a { color: var(--muted); margin: 0 10px; text-decoration: none; }
+  .foot-nav a:hover { color: var(--text); }
 </style>
 </head>
 <body>
@@ -286,6 +292,11 @@
     <div class="ad-slot">Advertisement</div>
 
     <div class="foot" data-i18n-html="foot"></div>
+
+    <nav class="foot-nav">
+      <a href="/about.html" data-i18n="navAbout">運営者情報・お問い合わせ</a>
+      <a href="/privacy.html" data-i18n="navPrivacy">プライバシーポリシー</a>
+    </nav>
 
   </div>
 
@@ -370,6 +381,8 @@ const I18N = {
     heroRemaining: (remaining, pct) => `この Act は残り <b>${remaining} 日</b>（進行度 ${pct}%）`,
     heroOpen: elapsed => `進行中（開始から <b>${elapsed} 日目</b>）。終了日が未発表のため残り日数は計算できません。`,
     heroOut: "現在はデータ収録範囲外です。新しい Act が発表されたらデータを追記してください。",
+    navAbout: "運営者情報・お問い合わせ",
+    navPrivacy: "プライバシーポリシー",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
           'Act 4 の終了日は公式未発表です。<br><br>' +
@@ -405,6 +418,8 @@ const I18N = {
     heroRemaining: (remaining, pct) => `<b>${remaining} days</b> left in this Act (progress ${pct}%)`,
     heroOpen: elapsed => `In progress (<b>day ${elapsed}</b>). Days left can't be calculated until the end date is announced.`,
     heroOut: "Today is outside the recorded data range. Please add new Acts once they are announced.",
+    navAbout: "About & Contact",
+    navPrivacy: "Privacy Policy",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
           "Act 4's end date has not been officially announced.<br><br>" +
@@ -440,6 +455,8 @@ const I18N = {
     heroRemaining: (remaining, pct) => `이 Act는 <b>${remaining}일</b> 남음 (진행도 ${pct}%)`,
     heroOpen: elapsed => `진행 중 (시작 후 <b>${elapsed}일째</b>). 종료일이 미정이라 남은 일수를 계산할 수 없습니다.`,
     heroOut: "현재 데이터 수록 범위를 벗어났습니다. 새로운 Act가 발표되면 추가해 주세요.",
+    navAbout: "운영자 정보·문의",
+    navPrivacy: "개인정보처리방침",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
           'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
@@ -475,6 +492,8 @@ const I18N = {
     heroRemaining: (remaining, pct) => `本 Act 还剩 <b>${remaining} 天</b>（进度 ${pct}%）`,
     heroOpen: elapsed => `进行中（开始后第 <b>${elapsed} 天</b>）。结束日期待定，无法计算剩余天数。`,
     heroOut: "当前超出数据收录范围。有新的 Act 公布后请补充数据。",
+    navAbout: "关于·联系",
+    navPrivacy: "隐私政策",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
           'Act 4 的结束日期尚未官方公布。<br><br>' +
@@ -510,6 +529,8 @@ const I18N = {
     heroRemaining: (remaining, pct) => `<b>${remaining} dias</b> restantes neste Act (progresso ${pct}%)`,
     heroOpen: elapsed => `Em andamento (<b>dia ${elapsed}</b>). Os dias restantes não podem ser calculados até a data de término ser anunciada.`,
     heroOut: "Hoje está fora do intervalo de dados registrado. Adicione novos Acts quando forem anunciados.",
+    navAbout: "Sobre e Contato",
+    navPrivacy: "Política de Privacidade",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
           'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
@@ -546,6 +567,8 @@ const I18N = {
     heroRemaining: (remaining, pct) => `<b>${remaining} días</b> restantes en este Act (progreso ${pct}%)`,
     heroOpen: elapsed => `En curso (<b>día ${elapsed}</b>). Los días restantes no se pueden calcular hasta que se anuncie la fecha de finalización.`,
     heroOut: "Hoy está fuera del rango de datos registrado. Agrega nuevos Acts cuando se anuncien.",
+    navAbout: "Acerca de y Contacto",
+    navPrivacy: "Política de Privacidad",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
           'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
