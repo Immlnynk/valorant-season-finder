@@ -251,15 +251,29 @@
   .empty { color: var(--muted); font-size: 14px; line-height: 1.7; }
   .tba { color: var(--muted); }
 
-  /* ===== 全Act一覧テーブル ===== */
-  .table-wrap { padding: 0 28px 28px; overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
-  th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
-  td.act-col { color: var(--red); font-weight: 700; }
-  tr.is-current { animation: rowpulse 2.2s ease-in-out infinite; }
+  /* ===== 全Act一覧アコーディオン ===== */
   @keyframes rowpulse { 0%,100% { background: rgba(255,70,85,.07); } 50% { background: rgba(255,70,85,.20); } }
-  tr.is-current td:first-child { border-left: 3px solid var(--red); }
+  .acc-controls { display: flex; gap: 8px; margin-top: 12px; }
+  .acc-controls button { padding: 6px 12px; font-size: 11px; font-family: inherit; background: var(--bg); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; transition: color .15s, border-color .15s; }
+  .acc-controls button:hover { color: var(--text); border-color: var(--red); }
+  .acc-list { padding: 4px 24px 24px; }
+  .acc-item { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; overflow: hidden; background: var(--bg); }
+  .acc-item.is-current-group { border-color: var(--red); }
+  .acc-head { width: 100%; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--panel); border: none; cursor: pointer; font-family: inherit; color: var(--text); text-align: left; }
+  .acc-head:hover { background: #20303d; }
+  .acc-era { font-size: 14px; font-weight: 700; letter-spacing: .02em; flex: 1; }
+  .is-current-group .acc-era { color: var(--red); }
+  .acc-range { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .acc-chev { font-size: 11px; color: var(--muted); transition: transform .2s; }
+  .acc-item.open .acc-chev { transform: rotate(180deg); }
+  .acc-body { display: none; }
+  .acc-item.open .acc-body { display: block; }
+  .acc-body table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .acc-body th, .acc-body td { padding: 9px 16px; text-align: left; border-top: 1px solid var(--line); white-space: nowrap; }
+  .acc-body th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+  .acc-body td.act-col { color: var(--red); font-weight: 700; }
+  .acc-body tr.is-current { animation: rowpulse 2.2s ease-in-out infinite; }
+  .acc-body tr.is-current td:first-child { border-left: 3px solid var(--red); }
 
   /* ===== 広告枠 ===== */
   .ad-slot {
@@ -369,9 +383,12 @@
     .cd-unit { min-width: 0; padding: 9px 2px; }
     .cd-unit b { font-size: 25px; }
     .cd-unit small { font-size: 9px; }
-    .table-wrap { padding: 0 12px 20px; }
-    th, td { padding: 8px 8px; font-size: 12px; }
-    th { font-size: 10px; }
+    .acc-list { padding: 4px 12px 20px; }
+    .acc-head { padding: 12px 12px; }
+    .acc-era { font-size: 13px; }
+    .acc-range { font-size: 10px; }
+    .acc-body th, .acc-body td { padding: 8px 12px; font-size: 12px; }
+    .acc-body th { font-size: 10px; }
     .brand-name { font-size: 19px; }
   }
 </style>
@@ -444,25 +461,17 @@
       </div>
     </div>
 
-    <!-- 全Act一覧 -->
+    <!-- 全Act一覧（アコーディオン） -->
     <div class="card">
       <div class="head">
         <h2 data-i18n="card2H2">シーズン / Act 一覧</h2>
         <p data-i18n="card2P">VALORANT 正式リリースからの全 Episode / Season・Act の期間一覧</p>
+        <div class="acc-controls">
+          <button type="button" id="exp-all" data-i18n="expandAll">すべて展開</button>
+          <button type="button" id="col-all" data-i18n="collapseAll">すべて閉じる</button>
+        </div>
       </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th data-i18n="thEra">シーズン / Episode</th>
-              <th data-i18n="thAct">Act</th>
-              <th data-i18n="thStart">開始日</th>
-              <th data-i18n="thEnd">終了日</th>
-            </tr>
-          </thead>
-          <tbody id="period-table"></tbody>
-        </table>
-      </div>
+      <div class="acc-list" id="period-acc"></div>
     </div>
 
     <!-- 解説コンテンツ（ガイド） -->
@@ -782,6 +791,8 @@ const I18N = {
     calTitle: "VALORANT 次のランクリセット（Act切替）",
     qToday: "今日",
     qNextAct: "次のAct開始",
+    expandAll: "すべて展開",
+    collapseAll: "すべて閉じる",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
           'Act 4 の終了日は公式未発表です。<br><br>' +
@@ -833,6 +844,8 @@ const I18N = {
     calTitle: "VALORANT next rank reset (Act change)",
     qToday: "Today",
     qNextAct: "Next Act start",
+    expandAll: "Expand all",
+    collapseAll: "Collapse all",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
           "Act 4's end date has not been officially announced.<br><br>" +
@@ -884,6 +897,8 @@ const I18N = {
     calTitle: "VALORANT 다음 랭크 리셋(Act 전환)",
     qToday: "오늘",
     qNextAct: "다음 Act 시작",
+    expandAll: "모두 펼치기",
+    collapseAll: "모두 접기",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
           'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
@@ -935,6 +950,8 @@ const I18N = {
     calTitle: "VALORANT 下次段位重置（Act 切换）",
     qToday: "今天",
     qNextAct: "下个 Act 开始",
+    expandAll: "全部展开",
+    collapseAll: "全部折叠",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
           'Act 4 的结束日期尚未官方公布。<br><br>' +
@@ -986,6 +1003,8 @@ const I18N = {
     calTitle: "VALORANT próximo reset de rank (mudança de Act)",
     qToday: "Hoje",
     qNextAct: "Início do próximo Act",
+    expandAll: "Expandir tudo",
+    collapseAll: "Recolher tudo",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
           'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
@@ -1038,6 +1057,8 @@ const I18N = {
     calTitle: "VALORANT próximo reinicio de rango (cambio de Act)",
     qToday: "Hoy",
     qNextAct: "Inicio del próximo Act",
+    expandAll: "Expandir todo",
+    collapseAll: "Contraer todo",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
           'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
@@ -1178,17 +1199,42 @@ function renderHero() {
 function renderTable() {
   const t = I18N[lang];
   const today = todayStr();
-  const tbody = document.getElementById("period-table");
-  tbody.innerHTML = PERIODS.map(p => {
-    const current = (today >= p.start && (p.end === null || today < p.end));
-    const endCell = p.end === null ? `<span class="tba">${t.tba}</span>` : fmtShort(p.end);
-    return `<tr class="${current ? "is-current" : ""}">
-      <td>${p.era}</td>
-      <td class="act-col">${p.act}</td>
-      <td>${fmtShort(p.start)}</td>
-      <td>${endCell}</td>
-    </tr>`;
+  const acc = document.getElementById("period-acc");
+  // era ごとにグループ化（順序保持）
+  const groups = [];
+  PERIODS.forEach(p => {
+    let g = groups.find(x => x.era === p.era);
+    if (!g) { g = { era: p.era, items: [] }; groups.push(g); }
+    g.items.push(p);
+  });
+  acc.innerHTML = groups.map(g => {
+    const first = g.items[0], last = g.items[g.items.length - 1];
+    const isCurrentGroup = g.items.some(p => today >= p.start && (p.end === null || today < p.end));
+    const range = fmtShort(first.start) + " 〜 " + (last.end === null ? t.tba : fmtShort(last.end));
+    const rows = g.items.map(p => {
+      const current = (today >= p.start && (p.end === null || today < p.end));
+      const endCell = p.end === null ? `<span class="tba">${t.tba}</span>` : fmtShort(p.end);
+      return `<tr class="${current ? "is-current" : ""}"><td class="act-col">${p.act}</td><td>${fmtShort(p.start)}</td><td>${endCell}</td></tr>`;
+    }).join("");
+    const open = isCurrentGroup;
+    return `<div class="acc-item${isCurrentGroup ? " is-current-group" : ""}${open ? " open" : ""}">
+      <button type="button" class="acc-head" aria-expanded="${open}">
+        <span class="acc-era">${g.era}</span>
+        <span class="acc-range">${range}</span>
+        <span class="acc-chev">▾</span>
+      </button>
+      <div class="acc-body">
+        <table><thead><tr><th>${t.thAct}</th><th>${t.thStart}</th><th>${t.thEnd}</th></tr></thead><tbody>${rows}</tbody></table>
+      </div>
+    </div>`;
   }).join("");
+  acc.querySelectorAll(".acc-head").forEach(h => {
+    h.addEventListener("click", () => {
+      const item = h.closest(".acc-item");
+      const isOpen = item.classList.toggle("open");
+      h.setAttribute("aria-expanded", isOpen);
+    });
+  });
 }
 
 // ===== カウントダウン（次のAct/ランクリセットまで） =====
@@ -1439,6 +1485,12 @@ document.getElementById("q-today").addEventListener("click", () => { const d = t
 document.getElementById("q-next").addEventListener("click", () => {
   const cur = findPeriod(todayStr());
   if (cur && cur.end) { dateEl.value = cur.end; show(cur.end); }
+});
+document.getElementById("exp-all").addEventListener("click", () => {
+  document.querySelectorAll("#period-acc .acc-item").forEach(it => { it.classList.add("open"); it.querySelector(".acc-head").setAttribute("aria-expanded", "true"); });
+});
+document.getElementById("col-all").addEventListener("click", () => {
+  document.querySelectorAll("#period-acc .acc-item").forEach(it => { it.classList.remove("open"); it.querySelector(".acc-head").setAttribute("aria-expanded", "false"); });
 });
 
 // 日付入力の初期値：今日（収録範囲内なら）
