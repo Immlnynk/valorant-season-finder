@@ -335,6 +335,14 @@
   .cd-tba { font-size: 16px; font-weight: 700; color: var(--text); padding: 6px 0; }
   .cd-local { font-size: 11px; color: var(--muted); margin-top: 12px; letter-spacing: .02em; }
   .cd-local b { color: var(--text); font-weight: 600; }
+
+  /* ===== シェア ===== */
+  .share { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .share button { padding: 11px 20px; font-size: 13px; font-family: inherit; font-weight: 600; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); transition: background .15s, border-color .15s; }
+  .share-btn { background: var(--red); color: #fff; border-color: var(--red); }
+  .share-btn:hover { background: var(--red-dark); }
+  .copy-btn { background: var(--panel); color: var(--text); }
+  .copy-btn:hover { border-color: var(--red); }
   .hero .now-bar > span { transition: width .8s ease; }
   /* 残り3日以下の緊急表示 */
   .countdown.is-urgent { border-color: var(--red); box-shadow: 0 0 0 1px var(--red), 0 0 24px rgba(255,70,85,.35); }
@@ -398,6 +406,12 @@
       </div>
       <div class="cd-tba" id="cd-tba" hidden></div>
       <div class="cd-local" id="cd-local" hidden></div>
+    </div>
+
+    <!-- シェア -->
+    <div class="share">
+      <button type="button" id="share-btn" class="share-btn" data-i18n="shareBtn">共有する</button>
+      <button type="button" id="copy-btn" class="copy-btn" data-i18n="copyBtn">リンクをコピー</button>
     </div>
 
     <!-- 広告枠1（AdSense審査通過後にここへ広告タグを挿入） -->
@@ -748,6 +762,10 @@ const I18N = {
     cdD: "日", cdH: "時間", cdM: "分", cdS: "秒",
     cdTBA: "終了日は未発表です",
     cdLocalLabel: "あなたの地域では",
+    shareText: (act, days) => days != null ? `VALORANT は今 ${act}！次のランクリセットまであと ${days} 日 🔫` : `VALORANT は今 ${act}！`,
+    shareBtn: "共有する",
+    copyBtn: "リンクをコピー",
+    copiedMsg: "コピーしました！",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
           'Act 4 の終了日は公式未発表です。<br><br>' +
@@ -791,6 +809,10 @@ const I18N = {
     cdD: "days", cdH: "hrs", cdM: "min", cdS: "sec",
     cdTBA: "End date not announced yet",
     cdLocalLabel: "In your local time:",
+    shareText: (act, days) => days != null ? `VALORANT is in ${act}! ${days} days until the next rank reset 🔫` : `VALORANT is in ${act}!`,
+    shareBtn: "Share",
+    copyBtn: "Copy link",
+    copiedMsg: "Copied!",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
           "Act 4's end date has not been officially announced.<br><br>" +
@@ -834,6 +856,10 @@ const I18N = {
     cdD: "일", cdH: "시간", cdM: "분", cdS: "초",
     cdTBA: "종료일 미발표",
     cdLocalLabel: "현지 시간 기준:",
+    shareText: (act, days) => days != null ? `VALORANT은 지금 ${act}! 다음 랭크 리셋까지 ${days}일 🔫` : `VALORANT은 지금 ${act}!`,
+    shareBtn: "공유하기",
+    copyBtn: "링크 복사",
+    copiedMsg: "복사되었습니다!",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
           'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
@@ -877,6 +903,10 @@ const I18N = {
     cdD: "天", cdH: "时", cdM: "分", cdS: "秒",
     cdTBA: "结束日期未公布",
     cdLocalLabel: "你所在地区：",
+    shareText: (act, days) => days != null ? `VALORANT 现在是 ${act}！距离下次段位重置还有 ${days} 天 🔫` : `VALORANT 现在是 ${act}！`,
+    shareBtn: "分享",
+    copyBtn: "复制链接",
+    copiedMsg: "已复制！",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
           'Act 4 的结束日期尚未官方公布。<br><br>' +
@@ -920,6 +950,10 @@ const I18N = {
     cdD: "dias", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Data de término ainda não anunciada",
     cdLocalLabel: "No seu horário local:",
+    shareText: (act, days) => days != null ? `VALORANT está no ${act}! Faltam ${days} dias para o próximo reset de rank 🔫` : `VALORANT está no ${act}!`,
+    shareBtn: "Compartilhar",
+    copyBtn: "Copiar link",
+    copiedMsg: "Copiado!",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
           'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
@@ -964,6 +998,10 @@ const I18N = {
     cdD: "días", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Fecha de fin aún no anunciada",
     cdLocalLabel: "En tu hora local:",
+    shareText: (act, days) => days != null ? `¡VALORANT está en ${act}! Faltan ${days} días para el próximo reinicio de rango 🔫` : `¡VALORANT está en ${act}!`,
+    shareBtn: "Compartir",
+    copyBtn: "Copiar enlace",
+    copiedMsg: "¡Copiado!",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
           'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
@@ -1222,6 +1260,32 @@ document.querySelectorAll(".lang-switch button").forEach(b => {
   b.addEventListener("click", () => setLang(b.dataset.lang));
 });
 dateEl.addEventListener("input", e => show(e.target.value));
+
+// ===== シェア =====
+const SHARE_URL = "https://valoact.com/";
+function buildShareText() {
+  const t = I18N[lang];
+  const cur = findPeriod(todayStr());
+  if (!cur) return t.title;
+  const days = cur.end === null ? null : daysBetween(todayStr(), cur.end);
+  return t.shareText(cur.act, days);
+}
+document.getElementById("share-btn").addEventListener("click", async () => {
+  const text = buildShareText();
+  if (navigator.share) {
+    try { await navigator.share({ title: "VALOACT", text: text, url: SHARE_URL }); } catch (e) {}
+  } else {
+    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(SHARE_URL), "_blank", "noopener");
+  }
+});
+document.getElementById("copy-btn").addEventListener("click", async () => {
+  const b = document.getElementById("copy-btn");
+  try {
+    await navigator.clipboard.writeText(SHARE_URL);
+    b.textContent = I18N[lang].copiedMsg;
+    setTimeout(() => { b.textContent = I18N[lang].copyBtn; }, 1500);
+  } catch (e) {}
+});
 
 // 日付入力の初期値：今日（収録範囲内なら）
 const today = todayStr();
