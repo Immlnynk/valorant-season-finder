@@ -774,7 +774,7 @@ const I18N = {
     cdD: "日", cdH: "時間", cdM: "分", cdS: "秒",
     cdTBA: "終了日は未発表です",
     cdLocalLabel: "あなたの地域では",
-    shareText: (act, days) => days != null ? `VALORANT は今 ${act}！次のランクリセットまであと ${days} 日 🔫` : `VALORANT は今 ${act}！`,
+    shareText: (era, act, days) => days != null ? `VALORANTは現在 ${era} ${act}です！次のランクリセットまであと${days}日 #VALORANT #VALOACT` : `VALORANTは現在 ${era} ${act}です！ #VALORANT #VALOACT`,
     shareBtn: "共有する",
     copyBtn: "リンクをコピー",
     copiedMsg: "コピーしました！",
@@ -825,7 +825,7 @@ const I18N = {
     cdD: "days", cdH: "hrs", cdM: "min", cdS: "sec",
     cdTBA: "End date not announced yet",
     cdLocalLabel: "In your local time:",
-    shareText: (act, days) => days != null ? `VALORANT is in ${act}! ${days} days until the next rank reset 🔫` : `VALORANT is in ${act}!`,
+    shareText: (era, act, days) => days != null ? `VALORANT is now in ${era} ${act}! ${days} days until the next rank reset #VALORANT #VALOACT` : `VALORANT is now in ${era} ${act}! #VALORANT #VALOACT`,
     shareBtn: "Share",
     copyBtn: "Copy link",
     copiedMsg: "Copied!",
@@ -876,7 +876,7 @@ const I18N = {
     cdD: "일", cdH: "시간", cdM: "분", cdS: "초",
     cdTBA: "종료일 미발표",
     cdLocalLabel: "현지 시간 기준:",
-    shareText: (act, days) => days != null ? `VALORANT은 지금 ${act}! 다음 랭크 리셋까지 ${days}일 🔫` : `VALORANT은 지금 ${act}!`,
+    shareText: (era, act, days) => days != null ? `VALORANT은 현재 ${era} ${act}! 다음 랭크 리셋까지 ${days}일 #VALORANT #VALOACT` : `VALORANT은 현재 ${era} ${act}! #VALORANT #VALOACT`,
     shareBtn: "공유하기",
     copyBtn: "링크 복사",
     copiedMsg: "복사되었습니다!",
@@ -927,7 +927,7 @@ const I18N = {
     cdD: "天", cdH: "时", cdM: "分", cdS: "秒",
     cdTBA: "结束日期未公布",
     cdLocalLabel: "你所在地区：",
-    shareText: (act, days) => days != null ? `VALORANT 现在是 ${act}！距离下次段位重置还有 ${days} 天 🔫` : `VALORANT 现在是 ${act}！`,
+    shareText: (era, act, days) => days != null ? `VALORANT 现在是 ${era} ${act}！距离下次段位重置还有 ${days} 天 #VALORANT #VALOACT` : `VALORANT 现在是 ${era} ${act}！ #VALORANT #VALOACT`,
     shareBtn: "分享",
     copyBtn: "复制链接",
     copiedMsg: "已复制！",
@@ -978,7 +978,7 @@ const I18N = {
     cdD: "dias", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Data de término ainda não anunciada",
     cdLocalLabel: "No seu horário local:",
-    shareText: (act, days) => days != null ? `VALORANT está no ${act}! Faltam ${days} dias para o próximo reset de rank 🔫` : `VALORANT está no ${act}!`,
+    shareText: (era, act, days) => days != null ? `VALORANT está em ${era} ${act}! Faltam ${days} dias para o próximo reset de rank #VALORANT #VALOACT` : `VALORANT está em ${era} ${act}! #VALORANT #VALOACT`,
     shareBtn: "Compartilhar",
     copyBtn: "Copiar link",
     copiedMsg: "Copiado!",
@@ -1030,7 +1030,7 @@ const I18N = {
     cdD: "días", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Fecha de fin aún no anunciada",
     cdLocalLabel: "En tu hora local:",
-    shareText: (act, days) => days != null ? `¡VALORANT está en ${act}! Faltan ${days} días para el próximo reinicio de rango 🔫` : `¡VALORANT está en ${act}!`,
+    shareText: (era, act, days) => days != null ? `¡VALORANT está en ${era} ${act}! Faltan ${days} días para el próximo reinicio de rango #VALORANT #VALOACT` : `¡VALORANT está en ${era} ${act}! #VALORANT #VALOACT`,
     shareBtn: "Compartir",
     copyBtn: "Copiar enlace",
     copiedMsg: "¡Copiado!",
@@ -1325,7 +1325,7 @@ function buildShareText() {
   const cur = findPeriod(todayStr());
   if (!cur) return t.title;
   const days = cur.end === null ? null : daysBetween(todayStr(), cur.end);
-  return t.shareText(cur.act, days);
+  return t.shareText(cur.era, cur.act, days);
 }
 // 照準×Vロゴをcanvasに描画
 function drawReticle(ctx, cx, cy, s) {
@@ -1363,31 +1363,31 @@ function generateShareImage() {
     const g = ctx.createLinearGradient(0, 0, W, H);
     g.addColorStop(0, "#0f1923"); g.addColorStop(1, "#26141c");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    drawReticle(ctx, 112, 108, 118);
+    drawReticle(ctx, 84, 80, 78);
     ctx.textBaseline = "middle";
-    ctx.fillStyle = "#ece8e1";
-    ctx.font = "800 54px " + FF;
-    ctx.fillText("VALOACT", 190, 110);
+    ctx.fillStyle = "#8b978f";
+    ctx.font = "700 32px " + FF;
+    ctx.fillText("VALOACT", 132, 80);
     ctx.textBaseline = "alphabetic";
     if (cur) {
       ctx.fillStyle = "#8b978f";
-      ctx.font = "600 38px " + FF;
-      ctx.fillText(cur.era, 92, 290);
+      ctx.font = "600 40px " + FF;
+      ctx.fillText(cur.era, 92, 235);
       ctx.fillStyle = "#fff";
-      ctx.font = "800 132px " + FF;
-      ctx.fillText(cur.act, 88, 420);
+      ctx.font = "800 104px " + FF;
+      ctx.fillText(cur.act, 88, 345);
       if (cur.end) {
         const days = daysBetween(todayStr(), cur.end);
         ctx.fillStyle = "#8b978f";
-        ctx.font = "600 32px " + FF;
-        ctx.fillText(t.cdLabel, 94, 488);
+        ctx.font = "600 34px " + FF;
+        ctx.fillText(t.cdLabel, 94, 430);
         ctx.fillStyle = "#ff4655";
-        ctx.font = "800 76px " + FF;
-        ctx.fillText(days + " " + t.cdD, 90, 565);
+        ctx.font = "800 104px " + FF;
+        ctx.fillText(days + " " + t.cdD, 90, 540);
       } else {
         ctx.fillStyle = "#ff4655";
-        ctx.font = "700 46px " + FF;
-        ctx.fillText(t.cdTBA, 92, 520);
+        ctx.font = "700 50px " + FF;
+        ctx.fillText(t.cdTBA, 92, 470);
       }
     } else {
       ctx.fillStyle = "#fff";
