@@ -333,6 +333,8 @@
   #cd-s { animation: cdpulse 1s ease-in-out infinite; }
   @keyframes cdpulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
   .cd-tba { font-size: 16px; font-weight: 700; color: var(--text); padding: 6px 0; }
+  .cd-local { font-size: 11px; color: var(--muted); margin-top: 12px; letter-spacing: .02em; }
+  .cd-local b { color: var(--text); font-weight: 600; }
   .hero .now-bar > span { transition: width .8s ease; }
   /* 残り3日以下の緊急表示 */
   .countdown.is-urgent { border-color: var(--red); box-shadow: 0 0 0 1px var(--red), 0 0 24px rgba(255,70,85,.35); }
@@ -395,6 +397,7 @@
         <div class="cd-unit"><b id="cd-s">00</b><small id="cd-sl"></small></div>
       </div>
       <div class="cd-tba" id="cd-tba" hidden></div>
+      <div class="cd-local" id="cd-local" hidden></div>
     </div>
 
     <!-- 広告枠1（AdSense審査通過後にここへ広告タグを挿入） -->
@@ -744,6 +747,7 @@ const I18N = {
     cdLabel: "次の Act・ランクリセットまで",
     cdD: "日", cdH: "時間", cdM: "分", cdS: "秒",
     cdTBA: "終了日は未発表です",
+    cdLocalLabel: "あなたの地域では",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
           'Act 4 の終了日は公式未発表です。<br><br>' +
@@ -786,6 +790,7 @@ const I18N = {
     cdLabel: "Until the next Act / rank reset",
     cdD: "days", cdH: "hrs", cdM: "min", cdS: "sec",
     cdTBA: "End date not announced yet",
+    cdLocalLabel: "In your local time:",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
           "Act 4's end date has not been officially announced.<br><br>" +
@@ -828,6 +833,7 @@ const I18N = {
     cdLabel: "다음 Act·랭크 리셋까지",
     cdD: "일", cdH: "시간", cdM: "분", cdS: "초",
     cdTBA: "종료일 미발표",
+    cdLocalLabel: "현지 시간 기준:",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
           'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
@@ -870,6 +876,7 @@ const I18N = {
     cdLabel: "距离下个 Act·段位重置",
     cdD: "天", cdH: "时", cdM: "分", cdS: "秒",
     cdTBA: "结束日期未公布",
+    cdLocalLabel: "你所在地区：",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
           'Act 4 的结束日期尚未官方公布。<br><br>' +
@@ -912,6 +919,7 @@ const I18N = {
     cdLabel: "Até o próximo Act / reset de rank",
     cdD: "dias", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Data de término ainda não anunciada",
+    cdLocalLabel: "No seu horário local:",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
           'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
@@ -955,6 +963,7 @@ const I18N = {
     cdLabel: "Hasta el próximo Act / reinicio de rango",
     cdD: "días", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Fecha de fin aún no anunciada",
+    cdLocalLabel: "En tu hora local:",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
           'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
@@ -1114,6 +1123,7 @@ function renderCountdown() {
   const el = document.getElementById("countdown");
   const clock = document.getElementById("cd-clock");
   const tba = document.getElementById("cd-tba");
+  const localEl = document.getElementById("cd-local");
   document.getElementById("cd-label").textContent = t.cdLabel;
   document.getElementById("cd-dl").textContent = t.cdD;
   document.getElementById("cd-hl").textContent = t.cdH;
@@ -1124,9 +1134,13 @@ function renderCountdown() {
   if (!cur) { el.hidden = true; return; }
   el.hidden = false;
   if (cur.end === null) {
-    clock.hidden = true; tba.hidden = false; return;
+    clock.hidden = true; tba.hidden = false; localEl.hidden = true; return;
   }
   clock.hidden = false; tba.hidden = true;
+  const locales = { ja: "ja-JP", en: "en-US", ko: "ko-KR", zh: "zh-CN", pt: "pt-BR", es: "es-ES" };
+  const dt = new Date(cur.end).toLocaleString(locales[lang] || lang, { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  localEl.innerHTML = t.cdLocalLabel + " <b>" + dt + "</b>";
+  localEl.hidden = false;
   tickCountdown();
 }
 function tickCountdown() {
