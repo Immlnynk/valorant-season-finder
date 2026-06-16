@@ -1364,7 +1364,10 @@ function selectProMatch(m) {
   const vid = m.youtube && (m.youtube.match(/[?&]v=([^&]+)/) || [])[1];
   const start = m.youtube && (m.youtube.match(/[?&]t=(\d+)/) || [])[1];
   if (vid) {
-    const src = "https://www.youtube-nocookie.com/embed/" + vid + (start ? "?start=" + start : "");
+    const params = [];
+    if (start) params.push("start=" + start);
+    params.push("autoplay=1");
+    const src = "https://www.youtube-nocookie.com/embed/" + vid + "?" + params.join("&");
     embed.innerHTML = '<iframe src="' + src + '" title="YouTube" loading="lazy" '
       + 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
       + '<a class="pro-yt-link" href="' + m.youtube + '" target="_blank" rel="noopener">' + I18N[lang].watchYt + '</a>';
