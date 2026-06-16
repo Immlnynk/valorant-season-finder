@@ -256,7 +256,8 @@
   .acc-controls { display: flex; gap: 8px; margin-top: 12px; }
   .acc-controls button { padding: 6px 12px; font-size: 11px; font-family: inherit; background: var(--bg); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; transition: color .15s, border-color .15s; }
   .acc-controls button:hover { color: var(--text); border-color: var(--red); }
-  .acc-list { padding: 4px 24px 24px; }
+  .acc-list { padding: 4px 24px 12px; }
+  .acc-controls-bottom { padding: 0 24px 24px; margin-top: 0; }
   .acc-item { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; overflow: hidden; background: var(--bg); }
   .acc-item.is-current-group { border-color: var(--red); }
   .acc-head { width: 100%; display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--panel); border: none; cursor: pointer; font-family: inherit; color: var(--text); text-align: left; }
@@ -392,7 +393,8 @@
     .cd-unit { min-width: 0; padding: 9px 2px; }
     .cd-unit b { font-size: 25px; }
     .cd-unit small { font-size: 9px; }
-    .acc-list { padding: 4px 12px 20px; }
+    .acc-list { padding: 4px 12px 8px; }
+    .acc-controls-bottom { padding: 0 12px 16px; }
     .acc-head { padding: 12px 12px; }
     .acc-era { font-size: 13px; }
     .acc-range { font-size: 10px; }
@@ -481,11 +483,15 @@
         <h2 data-i18n="card2H2">シーズン / Act 一覧</h2>
         <p data-i18n="card2P">VALORANT 正式リリースからの全 Episode / Season・Act の期間一覧</p>
         <div class="acc-controls">
-          <button type="button" id="exp-all" data-i18n="expandAll">すべて展開</button>
-          <button type="button" id="col-all" data-i18n="collapseAll">すべて閉じる</button>
+          <button type="button" class="exp-all" data-i18n="expandAll">すべて展開</button>
+          <button type="button" class="col-all" data-i18n="collapseAll">すべて閉じる</button>
         </div>
       </div>
       <div class="acc-list" id="period-acc"></div>
+      <div class="acc-controls acc-controls-bottom">
+        <button type="button" class="exp-all" data-i18n="expandAll">すべて展開</button>
+        <button type="button" class="col-all" data-i18n="collapseAll">すべて閉じる</button>
+      </div>
     </div>
 
     <!-- 解説コンテンツ（ガイド） -->
@@ -807,7 +813,7 @@ const I18N = {
     qNextAct: "次のAct開始",
     expandAll: "すべて展開",
     collapseAll: "すべて閉じる",
-    proLabel: "プロの名場面から探す",
+    proLabel: "プロの印象的な試合",
     watchYt: "🎬 該当シーンをYouTubeで見る",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
@@ -862,7 +868,7 @@ const I18N = {
     qNextAct: "Next Act start",
     expandAll: "Expand all",
     collapseAll: "Collapse all",
-    proLabel: "Jump to iconic pro moments",
+    proLabel: "Iconic pro matches",
     watchYt: "🎬 Watch the scene on YouTube",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
@@ -917,7 +923,7 @@ const I18N = {
     qNextAct: "다음 Act 시작",
     expandAll: "모두 펼치기",
     collapseAll: "모두 접기",
-    proLabel: "프로 명장면에서 찾기",
+    proLabel: "프로의 인상적인 경기",
     watchYt: "🎬 해당 장면 YouTube에서 보기",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
@@ -972,7 +978,7 @@ const I18N = {
     qNextAct: "下个 Act 开始",
     expandAll: "全部展开",
     collapseAll: "全部折叠",
-    proLabel: "从职业名场面查找",
+    proLabel: "职业经典比赛",
     watchYt: "🎬 在 YouTube 观看该场面",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
@@ -1027,7 +1033,7 @@ const I18N = {
     qNextAct: "Início do próximo Act",
     expandAll: "Expandir tudo",
     collapseAll: "Recolher tudo",
-    proLabel: "Momentos icônicos dos pros",
+    proLabel: "Partidas marcantes dos pros",
     watchYt: "🎬 Ver a cena no YouTube",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
@@ -1083,7 +1089,7 @@ const I18N = {
     qNextAct: "Inicio del próximo Act",
     expandAll: "Expandir todo",
     collapseAll: "Contraer todo",
-    proLabel: "Momentos icónicos de los pros",
+    proLabel: "Partidas icónicas de los pros",
     watchYt: "🎬 Ver la escena en YouTube",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
@@ -1345,9 +1351,9 @@ function updateCalBtn() {
 
 // ===== プロの名場面（クリックで日付入力。youtubeは後日設定） =====
 const PRO_MATCHES = [
-  { date: "2021-07-17", youtube: null, label: { ja: "Somethingの2連続ACE", en: "Something's back-to-back ACEs", ko: "Something의 2연속 ACE", zh: "Something 连续两次 ACE", pt: "ACEs seguidos de Something", es: "ACEs seguidos de Something" } },
-  { date: "2022-04-23", youtube: null, label: { ja: "ZETA vs Paper Rex 勝利", en: "ZETA beats Paper Rex", ko: "ZETA, Paper Rex 격파", zh: "ZETA 击败 Paper Rex", pt: "ZETA vence a Paper Rex", es: "ZETA vence a Paper Rex" } },
-  { date: "2023-05-21", youtube: null, label: { ja: "ZETA vs T1 (Masters Tokyo)", en: "ZETA vs T1 (Masters Tokyo)", ko: "ZETA vs T1 (마스터스 도쿄)", zh: "ZETA vs T1（东京大师赛）", pt: "ZETA vs T1 (Masters Tokyo)", es: "ZETA vs T1 (Masters Tokyo)" } }
+  { date: "2021-07-17", youtube: "https://www.youtube.com/watch?v=I3--aHERAY0&t=22469s", label: { ja: "Somethingの2連続ACE(2021)", en: "Something's back-to-back ACEs (2021)", ko: "Something의 2연속 ACE (2021)", zh: "Something 连续两次 ACE (2021)", pt: "ACEs seguidos de Something (2021)", es: "ACEs seguidos de Something (2021)" } },
+  { date: "2022-04-23", youtube: "https://www.youtube.com/watch?v=uBLECllWfoQ&t=14734s", label: { ja: "ZETA vs PRX(Masters 2022)", en: "ZETA vs PRX (Masters 2022)", ko: "ZETA vs PRX (마스터스 2022)", zh: "ZETA vs PRX（大师赛 2022）", pt: "ZETA vs PRX (Masters 2022)", es: "ZETA vs PRX (Masters 2022)" } },
+  { date: "2023-05-21", youtube: "https://www.youtube.com/watch?v=IJUydH0_3ak&t=24212s", label: { ja: "ZETA vs T1(VCT 2023)", en: "ZETA vs T1 (VCT 2023)", ko: "ZETA vs T1 (VCT 2023)", zh: "ZETA vs T1（VCT 2023）", pt: "ZETA vs T1 (VCT 2023)", es: "ZETA vs T1 (VCT 2023)" } }
 ];
 function selectProMatch(m) {
   dateEl.value = m.date;
@@ -1535,12 +1541,12 @@ document.getElementById("q-next").addEventListener("click", () => {
   const cur = findPeriod(todayStr());
   if (cur && cur.end) { dateEl.value = cur.end; show(cur.end); }
 });
-document.getElementById("exp-all").addEventListener("click", () => {
+document.querySelectorAll(".exp-all").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll("#period-acc .acc-item").forEach(it => { it.classList.add("open"); it.querySelector(".acc-head").setAttribute("aria-expanded", "true"); });
-});
-document.getElementById("col-all").addEventListener("click", () => {
+}));
+document.querySelectorAll(".col-all").forEach(b => b.addEventListener("click", () => {
   document.querySelectorAll("#period-acc .acc-item").forEach(it => { it.classList.remove("open"); it.querySelector(".acc-head").setAttribute("aria-expanded", "false"); });
-});
+}));
 
 // 日付入力の初期値：今日（収録範囲内なら）
 const today = todayStr();
