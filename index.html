@@ -364,6 +364,15 @@
   .quick-dates { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
   .quick-dates button { padding: 7px 14px; font-size: 12px; font-family: inherit; background: var(--bg); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; transition: color .15s, border-color .15s; }
   .quick-dates button:hover { color: var(--text); border-color: var(--red); }
+
+  /* ===== プロの名場面 ===== */
+  .pro-matches { margin-top: 16px; }
+  .pro-label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 8px; }
+  .pro-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pro-btns button { padding: 7px 14px; font-size: 12px; font-family: inherit; background: var(--bg); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; transition: color .15s, border-color .15s; }
+  .pro-btns button:hover { color: var(--text); border-color: var(--red); }
+  .pro-yt { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--red); text-decoration: none; }
+  .pro-yt:hover { text-decoration: underline; }
   .hero .now-bar > span { transition: width .8s ease; }
   /* 残り3日以下の緊急表示 */
   .countdown.is-urgent { border-color: var(--red); box-shadow: 0 0 0 1px var(--red), 0 0 24px rgba(255,70,85,.35); }
@@ -454,6 +463,11 @@
         <div class="quick-dates">
           <button type="button" id="q-today" data-i18n="qToday">今日</button>
           <button type="button" id="q-next" data-i18n="qNextAct">次のAct開始</button>
+        </div>
+        <div class="pro-matches">
+          <div class="pro-label" data-i18n="proLabel">プロの名場面から探す</div>
+          <div class="pro-btns" id="pro-btns"></div>
+          <a class="pro-yt" id="pro-yt" target="_blank" rel="noopener" hidden></a>
         </div>
         <div class="result" id="result">
           <div class="empty">上のカレンダーから日付を選んでください。</div>
@@ -793,6 +807,8 @@ const I18N = {
     qNextAct: "次のAct開始",
     expandAll: "すべて展開",
     collapseAll: "すべて閉じる",
+    proLabel: "プロの名場面から探す",
+    watchYt: "🎬 該当シーンをYouTubeで見る",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
           'Act 4 の終了日は公式未発表です。<br><br>' +
@@ -846,6 +862,8 @@ const I18N = {
     qNextAct: "Next Act start",
     expandAll: "Expand all",
     collapseAll: "Collapse all",
+    proLabel: "Jump to iconic pro moments",
+    watchYt: "🎬 Watch the scene on YouTube",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
           "Act 4's end date has not been officially announced.<br><br>" +
@@ -899,6 +917,8 @@ const I18N = {
     qNextAct: "다음 Act 시작",
     expandAll: "모두 펼치기",
     collapseAll: "모두 접기",
+    proLabel: "프로 명장면에서 찾기",
+    watchYt: "🎬 해당 장면 YouTube에서 보기",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
           'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
@@ -952,6 +972,8 @@ const I18N = {
     qNextAct: "下个 Act 开始",
     expandAll: "全部展开",
     collapseAll: "全部折叠",
+    proLabel: "从职业名场面查找",
+    watchYt: "🎬 在 YouTube 观看该场面",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
           'Act 4 的结束日期尚未官方公布。<br><br>' +
@@ -1005,6 +1027,8 @@ const I18N = {
     qNextAct: "Início do próximo Act",
     expandAll: "Expandir tudo",
     collapseAll: "Recolher tudo",
+    proLabel: "Momentos icônicos dos pros",
+    watchYt: "🎬 Ver a cena no YouTube",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
           'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
@@ -1059,6 +1083,8 @@ const I18N = {
     qNextAct: "Inicio del próximo Act",
     expandAll: "Expandir todo",
     collapseAll: "Contraer todo",
+    proLabel: "Momentos icónicos de los pros",
+    watchYt: "🎬 Ver la escena en YouTube",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
           'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
@@ -1317,6 +1343,28 @@ function updateCalBtn() {
   calBtn.hidden = false;
 }
 
+// ===== プロの名場面（クリックで日付入力。youtubeは後日設定） =====
+const PRO_MATCHES = [
+  { date: "2021-07-17", youtube: null, label: { ja: "Somethingの2連続ACE", en: "Something's back-to-back ACEs", ko: "Something의 2연속 ACE", zh: "Something 连续两次 ACE", pt: "ACEs seguidos de Something", es: "ACEs seguidos de Something" } },
+  { date: "2022-04-23", youtube: null, label: { ja: "ZETA vs Paper Rex 勝利", en: "ZETA beats Paper Rex", ko: "ZETA, Paper Rex 격파", zh: "ZETA 击败 Paper Rex", pt: "ZETA vence a Paper Rex", es: "ZETA vence a Paper Rex" } },
+  { date: "2023-05-21", youtube: null, label: { ja: "ZETA vs T1 (Masters Tokyo)", en: "ZETA vs T1 (Masters Tokyo)", ko: "ZETA vs T1 (마스터스 도쿄)", zh: "ZETA vs T1（东京大师赛）", pt: "ZETA vs T1 (Masters Tokyo)", es: "ZETA vs T1 (Masters Tokyo)" } }
+];
+function selectProMatch(m) {
+  dateEl.value = m.date;
+  show(m.date);
+  const yt = document.getElementById("pro-yt");
+  if (m.youtube) { yt.href = m.youtube; yt.textContent = I18N[lang].watchYt; yt.hidden = false; }
+  else { yt.hidden = true; }
+}
+function renderProButtons() {
+  const wrap = document.getElementById("pro-btns");
+  wrap.innerHTML = PRO_MATCHES.map((m, i) => `<button type="button" data-pro="${i}"></button>`).join("");
+  wrap.querySelectorAll("button").forEach((b, i) => {
+    b.textContent = PRO_MATCHES[i].label[lang] || PRO_MATCHES[i].label.en;
+    b.addEventListener("click", () => selectProMatch(PRO_MATCHES[i]));
+  });
+}
+
 // ===== 言語を適用 =====
 function applyLang() {
   const t = I18N[lang];
@@ -1347,6 +1395,7 @@ function applyLang() {
   const qn = document.getElementById("q-next");
   const curForQ = findPeriod(todayStr());
   if (qn) qn.hidden = !(curForQ && curForQ.end);
+  renderProButtons();
   renderHero();
   renderTable();
   renderCountdown();
