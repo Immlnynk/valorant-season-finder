@@ -59,7 +59,7 @@
   "url": "https://valoact.com/"
 }
 </script>
-<script type="application/ld+json">
+<script type="application/ld+json" id="faq-schema">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -1148,6 +1148,24 @@ setInterval(() => {
   if (el && !el.hidden) tickCountdown();
 }, 1000);
 
+// ===== FAQ構造化データを現在表示中のガイドFAQから生成（言語別） =====
+function updateFaqSchema() {
+  const block = document.querySelector("[data-guide-lang]:not([hidden])");
+  const el = document.getElementById("faq-schema");
+  if (!block || !el) return;
+  const qs = block.querySelectorAll(".faq-q");
+  const as = block.querySelectorAll(".faq-a");
+  const items = [];
+  for (let i = 0; i < qs.length && i < as.length; i++) {
+    items.push({
+      "@type": "Question",
+      "name": qs[i].textContent.replace(/^Q\.\s*/, "").trim(),
+      "acceptedAnswer": { "@type": "Answer", "text": as[i].textContent.replace(/^A\.\s*/, "").trim() }
+    });
+  }
+  el.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": items });
+}
+
 // ===== 言語を適用 =====
 function applyLang() {
   const t = I18N[lang];
@@ -1173,6 +1191,7 @@ function applyLang() {
   document.querySelectorAll("[data-guide-lang]").forEach(el => {
     el.hidden = el.dataset.guideLang !== guideLang;
   });
+  updateFaqSchema();
   renderHero();
   renderTable();
   renderCountdown();
