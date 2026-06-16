@@ -372,8 +372,10 @@
   .pro-btns { display: flex; gap: 8px; flex-wrap: wrap; }
   .pro-btns button { padding: 7px 14px; font-size: 12px; font-family: inherit; background: var(--bg); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; transition: color .15s, border-color .15s; }
   .pro-btns button:hover { color: var(--text); border-color: var(--red); }
-  .pro-yt { display: inline-block; margin-top: 10px; font-size: 13px; color: var(--red); text-decoration: none; }
-  .pro-yt:hover { text-decoration: underline; }
+  .pro-embed { margin-top: 12px; }
+  .pro-embed iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 8px; display: block; background: #000; }
+  .pro-yt-link { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--muted); text-decoration: none; }
+  .pro-yt-link:hover { color: var(--text); }
   .hero .now-bar > span { transition: width .8s ease; }
   /* 残り3日以下の緊急表示 */
   .countdown.is-urgent { border-color: var(--red); box-shadow: 0 0 0 1px var(--red), 0 0 24px rgba(255,70,85,.35); }
@@ -469,7 +471,7 @@
         <div class="pro-matches">
           <div class="pro-label" data-i18n="proLabel">プロの名場面から探す</div>
           <div class="pro-btns" id="pro-btns"></div>
-          <a class="pro-yt" id="pro-yt" target="_blank" rel="noopener" hidden></a>
+          <div class="pro-embed" id="pro-embed" hidden></div>
         </div>
         <div class="result" id="result">
           <div class="empty">上のカレンダーから日付を選んでください。</div>
@@ -1358,9 +1360,19 @@ const PRO_MATCHES = [
 function selectProMatch(m) {
   dateEl.value = m.date;
   show(m.date);
-  const yt = document.getElementById("pro-yt");
-  if (m.youtube) { yt.href = m.youtube; yt.textContent = I18N[lang].watchYt; yt.hidden = false; }
-  else { yt.hidden = true; }
+  const embed = document.getElementById("pro-embed");
+  const vid = m.youtube && (m.youtube.match(/[?&]v=([^&]+)/) || [])[1];
+  const start = m.youtube && (m.youtube.match(/[?&]t=(\d+)/) || [])[1];
+  if (vid) {
+    const src = "https://www.youtube-nocookie.com/embed/" + vid + (start ? "?start=" + start : "");
+    embed.innerHTML = '<iframe src="' + src + '" title="YouTube" loading="lazy" '
+      + 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+      + '<a class="pro-yt-link" href="' + m.youtube + '" target="_blank" rel="noopener">' + I18N[lang].watchYt + '</a>';
+    embed.hidden = false;
+  } else {
+    embed.innerHTML = "";
+    embed.hidden = true;
+  }
 }
 function renderProButtons() {
   const wrap = document.getElementById("pro-btns");
