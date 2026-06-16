@@ -343,6 +343,13 @@
   .share-btn:hover { background: var(--red-dark); }
   .copy-btn { background: var(--panel); color: var(--text); }
   .copy-btn:hover { border-color: var(--red); }
+  .cal-btn { padding: 11px 20px; font-size: 13px; font-weight: 600; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; display: inline-flex; align-items: center; cursor: pointer; transition: border-color .15s; }
+  .cal-btn:hover { border-color: var(--red); }
+
+  /* ===== 日付クイックボタン ===== */
+  .quick-dates { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .quick-dates button { padding: 7px 14px; font-size: 12px; font-family: inherit; background: var(--bg); color: var(--muted); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; transition: color .15s, border-color .15s; }
+  .quick-dates button:hover { color: var(--text); border-color: var(--red); }
   .hero .now-bar > span { transition: width .8s ease; }
   /* 残り3日以下の緊急表示 */
   .countdown.is-urgent { border-color: var(--red); box-shadow: 0 0 0 1px var(--red), 0 0 24px rgba(255,70,85,.35); }
@@ -412,6 +419,7 @@
     <div class="share">
       <button type="button" id="share-btn" class="share-btn" data-i18n="shareBtn">共有する</button>
       <button type="button" id="copy-btn" class="copy-btn" data-i18n="copyBtn">リンクをコピー</button>
+      <a id="cal-btn" class="cal-btn" target="_blank" rel="noopener" data-i18n="calBtn" hidden>カレンダーに追加</a>
     </div>
 
     <!-- 広告枠1（AdSense審査通過後にここへ広告タグを挿入） -->
@@ -426,6 +434,10 @@
       <div class="body">
         <label for="date" data-i18n="dateLabel">日付を選択</label>
         <input type="date" id="date">
+        <div class="quick-dates">
+          <button type="button" id="q-today" data-i18n="qToday">今日</button>
+          <button type="button" id="q-next" data-i18n="qNextAct">次のAct開始</button>
+        </div>
         <div class="result" id="result">
           <div class="empty">上のカレンダーから日付を選んでください。</div>
         </div>
@@ -766,6 +778,10 @@ const I18N = {
     shareBtn: "共有する",
     copyBtn: "リンクをコピー",
     copiedMsg: "コピーしました！",
+    calBtn: "カレンダーに追加",
+    calTitle: "VALORANT 次のランクリセット（Act切替）",
+    qToday: "今日",
+    qNextAct: "次のAct開始",
     foot: '※ 2025年以降は Riot が「Episode / Act」から「Season（年単位）/ Act」へ移行しました。' +
           'Act の境界は各 Act の開始日を基準にしています。データは 2026 Season Act 4（開始 2026/6/24）まで。' +
           'Act 4 の終了日は公式未発表です。<br><br>' +
@@ -813,6 +829,10 @@ const I18N = {
     shareBtn: "Share",
     copyBtn: "Copy link",
     copiedMsg: "Copied!",
+    calBtn: "Add to Calendar",
+    calTitle: "VALORANT next rank reset (Act change)",
+    qToday: "Today",
+    qNextAct: "Next Act start",
     foot: 'Note: Since 2025, Riot moved from "Episode / Act" to "Season (yearly) / Act". ' +
           "Act boundaries are based on each Act's start date. Data covers up to 2026 Season Act 4 (started Jun 24, 2026). " +
           "Act 4's end date has not been officially announced.<br><br>" +
@@ -860,6 +880,10 @@ const I18N = {
     shareBtn: "공유하기",
     copyBtn: "링크 복사",
     copiedMsg: "복사되었습니다!",
+    calBtn: "캘린더에 추가",
+    calTitle: "VALORANT 다음 랭크 리셋(Act 전환)",
+    qToday: "오늘",
+    qNextAct: "다음 Act 시작",
     foot: '※ 2025년부터 Riot은 "Episode / Act"에서 "Season(연 단위) / Act"로 변경했습니다. ' +
           'Act 경계는 각 Act의 시작일을 기준으로 합니다. 데이터는 2026 Season Act 4(2026/6/24 시작)까지. ' +
           'Act 4의 종료일은 공식 미발표입니다.<br><br>' +
@@ -907,6 +931,10 @@ const I18N = {
     shareBtn: "分享",
     copyBtn: "复制链接",
     copiedMsg: "已复制！",
+    calBtn: "添加到日历",
+    calTitle: "VALORANT 下次段位重置（Act 切换）",
+    qToday: "今天",
+    qNextAct: "下个 Act 开始",
     foot: '※ 自2025年起，Riot 将 "Episode / Act" 改为 "Season（年度）/ Act"。' +
           'Act 的分界以各 Act 的开始日期为准。数据收录至 2026 Season Act 4（2026/6/24 开始）。' +
           'Act 4 的结束日期尚未官方公布。<br><br>' +
@@ -954,6 +982,10 @@ const I18N = {
     shareBtn: "Compartilhar",
     copyBtn: "Copiar link",
     copiedMsg: "Copiado!",
+    calBtn: "Adicionar à Agenda",
+    calTitle: "VALORANT próximo reset de rank (mudança de Act)",
+    qToday: "Hoje",
+    qNextAct: "Início do próximo Act",
     foot: 'Nota: desde 2025, a Riot mudou de "Episode / Act" para "Season (anual) / Act". ' +
           'Os limites dos Acts são baseados na data de início de cada Act. ' +
           'Os dados vão até a 2026 Season Act 4 (início em 24 de junho de 2026). ' +
@@ -1002,6 +1034,10 @@ const I18N = {
     shareBtn: "Compartir",
     copyBtn: "Copiar enlace",
     copiedMsg: "¡Copiado!",
+    calBtn: "Añadir al calendario",
+    calTitle: "VALORANT próximo reinicio de rango (cambio de Act)",
+    qToday: "Hoy",
+    qNextAct: "Inicio del próximo Act",
     foot: 'Nota: desde 2025, Riot cambió de "Episode / Act" a "Season (anual) / Act". ' +
           'Los límites de los Acts se basan en la fecha de inicio de cada Act. ' +
           'Los datos llegan hasta la 2026 Season Act 4 (inicio el 24 de junio de 2026). ' +
@@ -1218,6 +1254,23 @@ function updateFaqSchema() {
   el.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", "mainEntity": items });
 }
 
+// ===== カレンダー追加ボタン（次のAct/リセット） =====
+function updateCalBtn() {
+  const t = I18N[lang];
+  const calBtn = document.getElementById("cal-btn");
+  const cur = findPeriod(todayStr());
+  if (!cur || cur.end === null) { calBtn.hidden = true; return; }
+  const fmtICS = d => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+  const start = new Date(cur.end);
+  const end = new Date(start.getTime() + 3600000);
+  calBtn.href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+    + "&text=" + encodeURIComponent(t.calTitle)
+    + "&dates=" + fmtICS(start) + "/" + fmtICS(end)
+    + "&details=" + encodeURIComponent(t.title)
+    + "&location=" + encodeURIComponent("https://valoact.com/");
+  calBtn.hidden = false;
+}
+
 // ===== 言語を適用 =====
 function applyLang() {
   const t = I18N[lang];
@@ -1244,6 +1297,10 @@ function applyLang() {
     el.hidden = el.dataset.guideLang !== guideLang;
   });
   updateFaqSchema();
+  updateCalBtn();
+  const qn = document.getElementById("q-next");
+  const curForQ = findPeriod(todayStr());
+  if (qn) qn.hidden = !(curForQ && curForQ.end);
   renderHero();
   renderTable();
   renderCountdown();
@@ -1285,6 +1342,11 @@ document.getElementById("copy-btn").addEventListener("click", async () => {
     b.textContent = I18N[lang].copiedMsg;
     setTimeout(() => { b.textContent = I18N[lang].copyBtn; }, 1500);
   } catch (e) {}
+});
+document.getElementById("q-today").addEventListener("click", () => { const d = todayStr(); dateEl.value = d; show(d); });
+document.getElementById("q-next").addEventListener("click", () => {
+  const cur = findPeriod(todayStr());
+  if (cur && cur.end) { dateEl.value = cur.end; show(cur.end); }
 });
 
 // 日付入力の初期値：今日（収録範囲内なら）
