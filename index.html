@@ -1327,13 +1327,106 @@ function buildShareText() {
   const days = cur.end === null ? null : daysBetween(todayStr(), cur.end);
   return t.shareText(cur.act, days);
 }
+// 照準×Vロゴをcanvasに描画
+function drawReticle(ctx, cx, cy, s) {
+  const out = s * 0.40, inn = s * 0.27;
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#ff4655";
+  ctx.lineWidth = s * 0.075;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - out); ctx.lineTo(cx, cy - inn);
+  ctx.moveTo(cx, cy + inn); ctx.lineTo(cx, cy + out);
+  ctx.moveTo(cx - out, cy); ctx.lineTo(cx - inn, cy);
+  ctx.moveTo(cx + inn, cy); ctx.lineTo(cx + out, cy);
+  ctx.stroke();
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = s * 0.095;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(cx - s * 0.17, cy - s * 0.15);
+  ctx.lineTo(cx, cy + s * 0.17);
+  ctx.lineTo(cx + s * 0.17, cy - s * 0.15);
+  ctx.stroke();
+  ctx.restore();
+}
+// 現在のAct・残り日数のシェア画像(1200x630 PNG)を生成
+function generateShareImage() {
+  return new Promise((resolve) => {
+    const t = I18N[lang];
+    const cur = findPeriod(todayStr());
+    const W = 1200, H = 630;
+    const canvas = document.createElement("canvas");
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    const FF = "'Segoe UI','Hiragino Sans','Noto Sans JP','Noto Sans KR','Microsoft YaHei',sans-serif";
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, "#0f1923"); g.addColorStop(1, "#26141c");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    drawReticle(ctx, 112, 108, 118);
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ece8e1";
+    ctx.font = "800 54px " + FF;
+    ctx.fillText("VALOACT", 190, 110);
+    ctx.textBaseline = "alphabetic";
+    if (cur) {
+      ctx.fillStyle = "#8b978f";
+      ctx.font = "600 38px " + FF;
+      ctx.fillText(cur.era, 92, 290);
+      ctx.fillStyle = "#fff";
+      ctx.font = "800 132px " + FF;
+      ctx.fillText(cur.act, 88, 420);
+      if (cur.end) {
+        const days = daysBetween(todayStr(), cur.end);
+        ctx.fillStyle = "#8b978f";
+        ctx.font = "600 32px " + FF;
+        ctx.fillText(t.cdLabel, 94, 488);
+        ctx.fillStyle = "#ff4655";
+        ctx.font = "800 76px " + FF;
+        ctx.fillText(days + " " + t.cdD, 90, 565);
+      } else {
+        ctx.fillStyle = "#ff4655";
+        ctx.font = "700 46px " + FF;
+        ctx.fillText(t.cdTBA, 92, 520);
+      }
+    } else {
+      ctx.fillStyle = "#fff";
+      ctx.font = "800 90px " + FF;
+      ctx.fillText("VALORANT", 88, 360);
+    }
+    ctx.fillStyle = "#ff4655";
+    ctx.font = "700 34px " + FF;
+    ctx.textAlign = "right";
+    ctx.fillText("valoact.com", W - 58, H - 48);
+    ctx.textAlign = "left";
+    canvas.toBlob((b) => resolve(b), "image/png");
+  });
+}
 document.getElementById("share-btn").addEventListener("click", async () => {
   const text = buildShareText();
-  if (navigator.share) {
-    try { await navigator.share({ title: "VALOACT", text: text, url: SHARE_URL }); } catch (e) {}
-  } else {
-    window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(SHARE_URL), "_blank", "noopener");
+  let file = null;
+  try {
+    const blob = await generateShareImage();
+    if (blob) file = new File([blob], "valoact.png", { type: "image/png" });
+  } catch (e) {}
+  // 画像共有（主にスマホ）
+  if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], text: text, url: SHARE_URL }); return; }
+    catch (e) { if (e.name === "AbortError") return; }
   }
+  // テキストのみ共有（ファイル非対応スマホ）
+  if (navigator.share) {
+    try { await navigator.share({ title: "VALOACT", text: text, url: SHARE_URL }); return; }
+    catch (e) { if (e.name === "AbortError") return; }
+  }
+  // PC等：画像をダウンロード＋X投稿
+  if (file) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(file);
+    a.download = "valoact.png";
+    a.click();
+  }
+  window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(SHARE_URL), "_blank", "noopener");
 });
 document.getElementById("copy-btn").addEventListener("click", async () => {
   const b = document.getElementById("copy-btn");
