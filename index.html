@@ -774,7 +774,7 @@ const I18N = {
     cdD: "日", cdH: "時間", cdM: "分", cdS: "秒",
     cdTBA: "終了日は未発表です",
     cdLocalLabel: "あなたの地域では",
-    shareText: (era, act, days) => days != null ? `VALORANTは現在 ${era} ${act}です！次のランクリセットまであと${days}日 #VALORANT #VALOACT` : `VALORANTは現在 ${era} ${act}です！ #VALORANT #VALOACT`,
+    shareText: (era, act, days) => days != null ? `VALORANTは現在 ${era} ${act}です！\n次のランクリセットまであと${days}日\n#VALORANT\n#VALOACT` : `VALORANTは現在 ${era} ${act}です！\n#VALORANT\n#VALOACT`,
     shareBtn: "共有する",
     copyBtn: "リンクをコピー",
     copiedMsg: "コピーしました！",
@@ -825,7 +825,7 @@ const I18N = {
     cdD: "days", cdH: "hrs", cdM: "min", cdS: "sec",
     cdTBA: "End date not announced yet",
     cdLocalLabel: "In your local time:",
-    shareText: (era, act, days) => days != null ? `VALORANT is now in ${era} ${act}! ${days} days until the next rank reset #VALORANT #VALOACT` : `VALORANT is now in ${era} ${act}! #VALORANT #VALOACT`,
+    shareText: (era, act, days) => days != null ? `VALORANT is now in ${era} ${act}!\n${days} days until the next rank reset\n#VALORANT\n#VALOACT` : `VALORANT is now in ${era} ${act}!\n#VALORANT\n#VALOACT`,
     shareBtn: "Share",
     copyBtn: "Copy link",
     copiedMsg: "Copied!",
@@ -876,7 +876,7 @@ const I18N = {
     cdD: "일", cdH: "시간", cdM: "분", cdS: "초",
     cdTBA: "종료일 미발표",
     cdLocalLabel: "현지 시간 기준:",
-    shareText: (era, act, days) => days != null ? `VALORANT은 현재 ${era} ${act}! 다음 랭크 리셋까지 ${days}일 #VALORANT #VALOACT` : `VALORANT은 현재 ${era} ${act}! #VALORANT #VALOACT`,
+    shareText: (era, act, days) => days != null ? `VALORANT은 현재 ${era} ${act}!\n다음 랭크 리셋까지 ${days}일\n#VALORANT\n#VALOACT` : `VALORANT은 현재 ${era} ${act}!\n#VALORANT\n#VALOACT`,
     shareBtn: "공유하기",
     copyBtn: "링크 복사",
     copiedMsg: "복사되었습니다!",
@@ -927,7 +927,7 @@ const I18N = {
     cdD: "天", cdH: "时", cdM: "分", cdS: "秒",
     cdTBA: "结束日期未公布",
     cdLocalLabel: "你所在地区：",
-    shareText: (era, act, days) => days != null ? `VALORANT 现在是 ${era} ${act}！距离下次段位重置还有 ${days} 天 #VALORANT #VALOACT` : `VALORANT 现在是 ${era} ${act}！ #VALORANT #VALOACT`,
+    shareText: (era, act, days) => days != null ? `VALORANT 现在是 ${era} ${act}！\n距离下次段位重置还有 ${days} 天\n#VALORANT\n#VALOACT` : `VALORANT 现在是 ${era} ${act}！\n#VALORANT\n#VALOACT`,
     shareBtn: "分享",
     copyBtn: "复制链接",
     copiedMsg: "已复制！",
@@ -978,7 +978,7 @@ const I18N = {
     cdD: "dias", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Data de término ainda não anunciada",
     cdLocalLabel: "No seu horário local:",
-    shareText: (era, act, days) => days != null ? `VALORANT está em ${era} ${act}! Faltam ${days} dias para o próximo reset de rank #VALORANT #VALOACT` : `VALORANT está em ${era} ${act}! #VALORANT #VALOACT`,
+    shareText: (era, act, days) => days != null ? `VALORANT está em ${era} ${act}!\nFaltam ${days} dias para o próximo reset de rank\n#VALORANT\n#VALOACT` : `VALORANT está em ${era} ${act}!\n#VALORANT\n#VALOACT`,
     shareBtn: "Compartilhar",
     copyBtn: "Copiar link",
     copiedMsg: "Copiado!",
@@ -1030,7 +1030,7 @@ const I18N = {
     cdD: "días", cdH: "h", cdM: "min", cdS: "seg",
     cdTBA: "Fecha de fin aún no anunciada",
     cdLocalLabel: "En tu hora local:",
-    shareText: (era, act, days) => days != null ? `¡VALORANT está en ${era} ${act}! Faltan ${days} días para el próximo reinicio de rango #VALORANT #VALOACT` : `¡VALORANT está en ${era} ${act}! #VALORANT #VALOACT`,
+    shareText: (era, act, days) => days != null ? `¡VALORANT está en ${era} ${act}!\nFaltan ${days} días para el próximo reinicio de rango\n#VALORANT\n#VALOACT` : `¡VALORANT está en ${era} ${act}!\n#VALORANT\n#VALOACT`,
     shareBtn: "Compartir",
     copyBtn: "Copiar enlace",
     copiedMsg: "¡Copiado!",
@@ -1323,9 +1323,8 @@ const SHARE_URL = "https://valoact.com/";
 function buildShareText() {
   const t = I18N[lang];
   const cur = findPeriod(todayStr());
-  if (!cur) return t.title;
-  const days = cur.end === null ? null : daysBetween(todayStr(), cur.end);
-  return t.shareText(cur.era, cur.act, days);
+  const msg = cur ? t.shareText(cur.era, cur.act, cur.end === null ? null : daysBetween(todayStr(), cur.end)) : t.title;
+  return msg + "\n" + SHARE_URL;
 }
 // 照準×Vロゴをcanvasに描画
 function drawReticle(ctx, cx, cy, s) {
@@ -1411,12 +1410,12 @@ document.getElementById("share-btn").addEventListener("click", async () => {
   } catch (e) {}
   // 画像共有（主にスマホ）
   if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], text: text, url: SHARE_URL }); return; }
+    try { await navigator.share({ files: [file], text: text }); return; }
     catch (e) { if (e.name === "AbortError") return; }
   }
   // テキストのみ共有（ファイル非対応スマホ）
   if (navigator.share) {
-    try { await navigator.share({ title: "VALOACT", text: text, url: SHARE_URL }); return; }
+    try { await navigator.share({ title: "VALOACT", text: text }); return; }
     catch (e) { if (e.name === "AbortError") return; }
   }
   // PC等：画像をダウンロード＋X投稿
@@ -1426,7 +1425,7 @@ document.getElementById("share-btn").addEventListener("click", async () => {
     a.download = "valoact.png";
     a.click();
   }
-  window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(SHARE_URL), "_blank", "noopener");
+  window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text), "_blank", "noopener");
 });
 document.getElementById("copy-btn").addEventListener("click", async () => {
   const b = document.getElementById("copy-btn");
