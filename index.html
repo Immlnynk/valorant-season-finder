@@ -349,7 +349,6 @@
   }
   .cd-unit b { font-size: 30px; font-weight: 800; color: var(--red); font-variant-numeric: tabular-nums; line-height: 1; }
   .cd-unit small { font-size: 10px; letter-spacing: .06em; color: var(--muted); margin-top: 7px; text-transform: uppercase; }
-  #cd-s { animation: cdpulse 1s ease-in-out infinite; }
   @keyframes cdpulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
   .cd-tba { font-size: 16px; font-weight: 700; color: var(--text); padding: 6px 0; }
   .cd-local { font-size: 11px; color: var(--muted); margin-top: 12px; letter-spacing: .02em; }
@@ -408,7 +407,27 @@
   .tier { font-weight: 700; }
   .tier-iron{ color:#8b95a0 } .tier-bronze{ color:#b3814f } .tier-silver{ color:#c8ced6 } .tier-gold{ color:#f2c94c }
   .tier-plat{ color:#4fb8c9 } .tier-diamond{ color:#cf8fe0 } .tier-ascendant{ color:#35c46a } .tier-immortal{ color:#e0405f } .tier-radiant{ color:#ffe08a }
-  @media (prefers-reduced-motion: reduce) { .container > * { animation: none; } }
+  /* 背景の極薄アニメーション（赤×ティールの光がゆっくり漂う＋斜めグリッド） */
+  body::before { content:""; position: fixed; inset: -20%; z-index: -2; pointer-events: none;
+    background: radial-gradient(38% 38% at 18% 22%, rgba(255,70,85,.10), transparent 70%), radial-gradient(42% 42% at 84% 82%, rgba(45,212,191,.07), transparent 70%);
+    animation: bgdrift 26s ease-in-out infinite alternate; }
+  @keyframes bgdrift { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(-3%,3%) scale(1.08); } }
+  body::after { content:""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+    background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0 1px, transparent 1px 24px); }
+  /* Episode/Season 毎のアクセント色（左バー） */
+  .acc-head { box-shadow: inset 4px 0 0 var(--acc, var(--line)); }
+  /* 進行度バーのシマー */
+  .hero .now-bar, .bar { position: relative; }
+  .hero .now-bar::after, .bar::after { content:""; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent); transform: translateX(-100%); animation: shimmer 3s ease-in-out infinite; }
+  @keyframes shimmer { 0% { transform: translateX(-100%); } 55%,100% { transform: translateX(120%); } }
+  /* カウントダウン数字のロール */
+  @keyframes numpop { 0% { transform: translateY(-38%); opacity: .25; } 100% { transform: translateY(0); opacity: 1; } }
+  .cd-unit b.pop { animation: numpop .35s ease; }
+  /* カウントダウン枠のアングラルカット（斜めエッジ） */
+  .cd-unit { border-radius: 0; clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px); }
+  /* 見出しの幾何モチーフ（角マーク） */
+  .card .head h2::before, .guide h2::before { content:""; display:inline-block; width:9px; height:9px; margin-right:9px; border-left:2px solid var(--red); border-top:2px solid var(--red); vertical-align: middle; }
+  @media (prefers-reduced-motion: reduce) { .container > *, body::before, .hero .now-bar::after, .bar::after { animation: none; } }
 
   /* ===== スマートフォン最適化 ===== */
   @media (max-width: 480px) {
@@ -881,6 +900,9 @@ const EPISODE_INFO = {
     en: "The current Season, with major map reworks, new modes, and ongoing updates."
   }
 };
+
+// Episode/Season ごとのアクセントカラー（表示順）
+const ACC_COLORS = ["#ff6b4a", "#4fb8c9", "#7c9cff", "#b57cff", "#ff7ec0", "#f2c94c", "#35c46a", "#ff5a5a", "#ff9f43", "#2dd4bf", "#ff4655"];
 const MONTHS = {
   en: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
   pt: ["jan.","fev.","mar.","abr.","mai.","jun.","jul.","ago.","set.","out.","nov.","dez."],
@@ -1362,7 +1384,7 @@ function renderTable() {
     if (!g) { g = { era: p.era, items: [] }; groups.push(g); }
     g.items.push(p);
   });
-  acc.innerHTML = groups.map(g => {
+  acc.innerHTML = groups.map((g, gi) => {
     const first = g.items[0], last = g.items[g.items.length - 1];
     const isCurrentGroup = g.items.some(p => today >= p.start && (p.end === null || today < p.end));
     const range = fmtShort(first.start) + " 〜 " + (last.end === null ? t.tba : fmtShort(last.end));
@@ -1372,7 +1394,7 @@ function renderTable() {
       return `<tr class="${current ? "is-current" : ""}"><td class="act-col">${p.act}</td><td>${fmtShort(p.start)}</td><td>${endCell}</td></tr>`;
     }).join("");
     const open = isCurrentGroup;
-    return `<div class="acc-item${isCurrentGroup ? " is-current-group" : ""}${open ? " open" : ""}">
+    return `<div class="acc-item${isCurrentGroup ? " is-current-group" : ""}${open ? " open" : ""}" style="--acc:${ACC_COLORS[gi % ACC_COLORS.length]}">
       <button type="button" class="acc-head" aria-expanded="${open}">
         <span class="acc-era">${g.era}</span>
         <span class="acc-range">${range}</span>
@@ -1419,6 +1441,15 @@ function renderCountdown() {
   localEl.hidden = false;
   tickCountdown();
 }
+function setNum(el, val) {
+  val = String(val);
+  if (el.textContent === val) return;
+  el.textContent = val;
+  el.classList.remove("pop");
+  void el.offsetWidth;
+  el.classList.add("pop");
+  el.addEventListener("animationend", () => el.classList.remove("pop"), { once: true });
+}
 function tickCountdown() {
   const el = document.getElementById("countdown");
   const cur = findPeriod(todayStr());
@@ -1427,10 +1458,10 @@ function tickCountdown() {
   if (diff <= 0) { renderHero(); renderCountdown(); return; }
   const days = Math.floor(diff / 86400000);
   const pad = n => String(n).padStart(2, "0");
-  document.getElementById("cd-d").textContent = days;
-  document.getElementById("cd-h").textContent = pad(Math.floor((diff % 86400000) / 3600000));
-  document.getElementById("cd-m").textContent = pad(Math.floor((diff % 3600000) / 60000));
-  document.getElementById("cd-s").textContent = pad(Math.floor((diff % 60000) / 1000));
+  setNum(document.getElementById("cd-d"), days);
+  setNum(document.getElementById("cd-h"), pad(Math.floor((diff % 86400000) / 3600000)));
+  setNum(document.getElementById("cd-m"), pad(Math.floor((diff % 3600000) / 60000)));
+  setNum(document.getElementById("cd-s"), pad(Math.floor((diff % 60000) / 1000)));
   el.classList.toggle("is-urgent", days <= 3);
 }
 setInterval(() => {
