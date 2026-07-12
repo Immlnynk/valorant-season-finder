@@ -269,6 +269,7 @@
   .acc-item.open .acc-chev { transform: rotate(180deg); }
   .acc-body { display: none; }
   .acc-item.open .acc-body { display: block; }
+  .acc-desc { padding: 12px 16px 2px; font-size: 12px; color: var(--muted); line-height: 1.75; border-top: 1px solid var(--line); }
   .acc-body table { width: 100%; border-collapse: collapse; font-size: 13px; }
   .acc-body th, .acc-body td { padding: 9px 16px; text-align: left; border-top: 1px solid var(--line); white-space: nowrap; }
   .acc-body th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
@@ -761,6 +762,54 @@ const PERIODS = [
 ];
 
 const FIRST = PERIODS[0].start;
+
+// 各Episode/Seasonの主な追加要素（日英。他言語は英語表示）
+const EPISODE_INFO = {
+  "Episode 1: IGNITION": {
+    ja: "VALORANT 正式リリース（2020年6月2日）。ローンチ後に Killjoy・Skye が加入し、マップ Icebox が登場。コンペティティブ（ランク）もこの Episode で実装されました。",
+    en: "VALORANT's official launch (June 2, 2020). Killjoy and Skye were added after launch, the map Icebox arrived, and Ranked (Competitive) was introduced during this Episode."
+  },
+  "Episode 2: FORMATION": {
+    ja: "新エージェント Yoru・Astra が加入し、マップ Breeze が追加されました。",
+    en: "Added agents Yoru and Astra, plus the map Breeze."
+  },
+  "Episode 3: REFLECTION": {
+    ja: "新エージェント KAY/O・Chamber が加入し、マップ Fracture が追加されました。",
+    en: "Added agents KAY/O and Chamber, plus the map Fracture."
+  },
+  "Episode 4: DISRUPTION": {
+    ja: "新エージェント Neon・Fade が加入しました。",
+    en: "Added agents Neon and Fade."
+  },
+  "Episode 5: DIMENSION": {
+    ja: "マップ Pearl が追加され、新エージェント Harbor が加入。ランク帯「アセンダント」もこの Episode で新設されました。",
+    en: "Added the map Pearl and agent Harbor. The Ascendant rank tier was also introduced this Episode."
+  },
+  "Episode 6: REVELATION": {
+    ja: "マップ Lotus が追加され、新エージェント Gekko が加入しました。",
+    en: "Added the map Lotus and agent Gekko."
+  },
+  "Episode 7: EVOLUTION": {
+    ja: "新エージェント Deadlock・Iso が加入し、マップ Sunset が追加。チームデスマッチ（TDM）モードも実装されました。",
+    en: "Added agents Deadlock and Iso and the map Sunset. The Team Deathmatch mode was also introduced."
+  },
+  "Episode 8: DEFIANCE": {
+    ja: "新エージェント Clove が加入し、マップ Abyss が追加。新武器 Outlaw も登場しました。",
+    en: "Added agent Clove and the map Abyss, along with the Outlaw sniper."
+  },
+  "Episode 9: COLLISION": {
+    ja: "新エージェント Vyse が加入。コンソール版のベータもこの Episode で始動しました。",
+    en: "Added agent Vyse. The console beta also launched during this Episode."
+  },
+  "Season 2025": {
+    ja: "「Episode / Act」から年単位の「Season」へ移行した最初の年。新エージェント Tejo・Waylay などが加入し、マップ Corrode が追加。Unreal Engine 5 へのアップグレードも行われました。",
+    en: "The first year of the shift from \"Episode / Act\" to yearly \"Seasons.\" Added agents including Tejo and Waylay and the map Corrode, and upgraded to Unreal Engine 5."
+  },
+  "Season 2026": {
+    ja: "現行シーズン。マップの大規模リワークや新モードの追加など、随時アップデートが続いています。",
+    en: "The current Season, with major map reworks, new modes, and ongoing updates."
+  }
+};
 const MONTHS = {
   en: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
   pt: ["jan.","fev.","mar.","abr.","mai.","jun.","jul.","ago.","set.","out.","nov.","dez."],
@@ -1259,6 +1308,7 @@ function renderTable() {
         <span class="acc-chev">▾</span>
       </button>
       <div class="acc-body">
+        ${EPISODE_INFO[g.era] ? '<div class="acc-desc">' + (EPISODE_INFO[g.era][lang] || EPISODE_INFO[g.era].en) + '</div>' : ''}
         <table><thead><tr><th>${t.thAct}</th><th>${t.thStart}</th><th>${t.thEnd}</th></tr></thead><tbody>${rows}</tbody></table>
       </div>
     </div>`;
