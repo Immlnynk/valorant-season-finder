@@ -320,6 +320,7 @@
     color: var(--text); margin: 24px 0 10px;
   }
   .guide > div > h2:first-child { margin-top: 0; }
+  .guide h3 { font-size: 13px; color: var(--text); margin: 16px 0 6px; letter-spacing: .02em; }
   .guide p { font-size: 13px; color: var(--muted); line-height: 1.85; margin-bottom: 10px; }
   .guide ul { margin: 0 0 10px 1.2em; }
   .guide li { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 5px; }
@@ -697,6 +698,52 @@
           <div class="faq-a">A. Sí: elige una fecha para ver su Season/Act y explora la lista completa de Acts desde el lanzamiento oficial.</div>
           <div class="faq-q">Q. ¿Es este un sitio oficial?</div>
           <div class="faq-a">A. No. Es una herramienta no oficial creada por jugadores fans.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ランクの仕組み完全ガイド（日英切替） -->
+    <div class="card">
+      <div class="body guide">
+        <div data-rank-lang="ja">
+          <h2>VALORANT ランクの仕組み完全ガイド</h2>
+          <h3>ランクティア一覧</h3>
+          <p>コンペティティブには下から <b>アイアン / ブロンズ / シルバー / ゴールド / プラチナ / ダイヤモンド / アセンダント / イモータル / レディアント</b> の9段階があります。</p>
+          <ul>
+            <li>アイアン〜イモータルは各「1・2・3」の3ディビジョンに分かれます（例：ゴールド1〜3）。</li>
+            <li><b>アセンダント</b>は Episode 5 で新設された帯で、ダイヤモンドとイモータルの間に位置します。</li>
+            <li><b>レディアント</b>は各地域の上位プレイヤーのみが到達できる最高位です。</li>
+          </ul>
+          <h3>RR（ランクレーティング）と MMR</h3>
+          <p><b>RR</b> は各ランク内の 0〜100 のポイントです。試合に勝つと増え、負けると減ります。100 を超えると昇格、0 を下回ると降格します。増減量は勝敗に加え、非公開の実力指標 <b>MMR（マッチメイキングレーティング）</b> とのバランスやパフォーマンスで変動します。表示ランクと MMR が乖離しているほど増減が大きくなり、実力に見合ったランクへ早く収束します。</p>
+          <h3>プレイスメント（配置マッチ）</h3>
+          <p>新しいシーズンの開始時は <b>5戦</b>、通常の Act 切り替え時は <b>1戦</b> のプレイスメントで新しいランクが決まります。リセット後は前シーズンの実力を引き継ぎつつ、少し下がった位置から再スタートします。</p>
+          <h3>Act Rank（アクトランク）</h3>
+          <p>その Act の成績を記録するバッジです。Act 中に勝った試合のうち上位9勝の平均で決まり、プロフィールに表示されます。</p>
+          <h3>イモータル・レディアントとリーダーボード</h3>
+          <p>イモータル以上は各地域の <b>リーダーボード</b> に順位が表示されます。レディアントは原則、地域ごとの上位500名。Act 切り替え時、イモータル/レディアント帯はリーダーボード順位こそ保持されますが、RR は大きく減少します。</p>
+          <h3>降格</h3>
+          <p>RR が 0 を下回ると1段階降格します。ただし昇格直後は降格保護があり、すぐには落ちません。</p>
+        </div>
+        <div data-rank-lang="en" hidden>
+          <h2>Complete Guide to the VALORANT Ranking System</h2>
+          <h3>Rank tiers</h3>
+          <p>Competitive has nine tiers, from lowest to highest: <b>Iron, Bronze, Silver, Gold, Platinum, Diamond, Ascendant, Immortal, Radiant</b>.</p>
+          <ul>
+            <li>Iron through Immortal are each split into three divisions (1, 2, 3) — e.g., Gold 1–3.</li>
+            <li><b>Ascendant</b> was added in Episode 5 and sits between Diamond and Immortal.</li>
+            <li><b>Radiant</b> is the top tier, reached only by the highest-ranked players in each region.</li>
+          </ul>
+          <h3>RR (Rank Rating) and MMR</h3>
+          <p><b>RR</b> is a 0–100 score within each rank. You gain it by winning and lose it by losing; cross 100 to rank up, or drop below 0 to rank down. The amount depends on the result plus your hidden <b>MMR (Matchmaking Rating)</b> and performance. The bigger the gap between your visible rank and MMR, the larger the swings, so you converge on your true rank faster.</p>
+          <h3>Placement matches</h3>
+          <p>You play <b>5 games</b> at the start of a season and <b>1 game</b> at a normal Act transition to set your new rank. After a reset you carry over your previous skill but restart from a slightly lower position.</p>
+          <h3>Act Rank</h3>
+          <p>A badge that records your performance for the Act. It is based on the average of your top 9 wins that Act and is shown on your profile.</p>
+          <h3>Immortal, Radiant, and the leaderboard</h3>
+          <p>Immortal and above appear on each region's <b>leaderboard</b>. Radiant is generally the top 500 players per region. At an Act transition, Immortal/Radiant players keep their leaderboard spot but their RR drops significantly.</p>
+          <h3>Demotion</h3>
+          <p>Dropping below 0 RR demotes you one division. However, there is demotion protection right after a promotion, so you won't fall immediately.</p>
         </div>
       </div>
     </div>
@@ -1461,6 +1508,11 @@ function applyLang() {
   const guideLang = document.querySelector('[data-guide-lang="' + lang + '"]') ? lang : "en";
   document.querySelectorAll("[data-guide-lang]").forEach(el => {
     el.hidden = el.dataset.guideLang !== guideLang;
+  });
+  // ランクガイドは日本語/それ以外は英語
+  const rankLang = lang === "ja" ? "ja" : "en";
+  document.querySelectorAll("[data-rank-lang]").forEach(el => {
+    el.hidden = el.dataset.rankLang !== rankLang;
   });
   updateFaqSchema();
   updateCalBtn();
